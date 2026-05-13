@@ -1,0 +1,98 @@
+
+/*
+==============================
+RIGHT TO LEFT - RTL
+==============================
+*/
+body{
+
+    font-family: "Alexandria", sans-serif  !important;
+    font-size: 14px;
+    text-align: right;
+}
+
+header a {
+    font-family: "Alexandria", sans-serif  !important;
+    font-size: 14px;
+}
+
+h2,  
+h3,
+h1,
+h4,
+h5,
+h6,
+related-title,
+texttitle-home-3,
+p
+{
+  font-family: "Alexandria", sans-serif  !important;
+}
+
+
+.homepage-search-title{
+  text-align: right;
+}
+
+.dropdown-menu{
+  text-align: right;
+}
+
+.font-weight-bold{
+  font-size: 30px;
+}
+
+.select2-results{
+  text-align: right;
+}
+
+.footer{
+  direction: rtl;
+}
+
+.workers-nav{
+  direction: rtl;
+}
+
+.col .font-weight-bold{
+  font-size: 15px;
+}
+
+.products-section{
+  direction: rtl;
+}
+
+.login-heading{
+  text-align: right;
+}
+.ninjax-nav {
+  padding: 0;
+  direction: rtl;
+}
+
+.dropdown-menu-right {
+  right: auto;
+  left: 0;
+}
+
+.sidebar .nav-item .nav-link {
+  font-family: "Alexandria", sans-serif  !important;
+  text-align: right;
+}
+.social {
+  color: #fff;
+  float: left;
+  margin: 62px 0 0;
+}
+.float-right {
+  float: left !important;
+}
+
+.video-title a {
+  font-family: "Alexandria", sans-serif  !important;
+  font-size: 14px;
+}
+
+.channels-title a {
+  font-family: "Alexandria", sans-serif  !important;
+}
