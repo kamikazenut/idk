@@ -29,6 +29,7 @@ const adminTagRoutes = require('./routes/admin/tags');
 
 const app = express();
 const port = process.env.PORT || 3000;
+const host = process.env.HOST || '0.0.0.0';
 const trustProxy = process.env.TRUST_PROXY === 'false' ? false : Number(process.env.TRUST_PROXY || 1);
 
 app.set('trust proxy', trustProxy);
@@ -139,8 +140,8 @@ app.use((err, req, res, next) => {
 });
 
 if (require.main === module) {
-  app.listen(port, () => {
-    console.log(`Public Domain Game Vault running on http://localhost:${port}`);
+  app.listen(port, host, () => {
+    console.log(`Public Domain Game Vault running on http://${host}:${port}`);
   });
 }
 
