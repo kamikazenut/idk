@@ -34,5 +34,6 @@ A full-stack public domain game download platform built with Node.js, Express, E
 ## Supabase Notes
 
 - Use the anon key for public client operations and the service role key only on the server.
+- `SUPABASE_URL` may be entered as either `https://your-project.supabase.co` or `your-project.supabase.co`; the app normalizes host-only values to HTTPS for deployment panels that strip the protocol.
 - Create your first admin by updating `profiles.role` to `admin` in Supabase after registering.
 - Storage uploads target the `game-media` bucket by default.
