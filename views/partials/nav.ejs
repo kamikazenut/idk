@@ -1,0 +1,36 @@
+<nav class="navbar navbar-expand-lg navbar-dark site-nav sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <span class="brand-mark">PD</span>
+      <span>Game Vault</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav" aria-controls="siteNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="siteNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link <%= currentPath === '/' ? 'active' : '' %>" href="/">Home</a></li>
+        <li class="nav-item"><a class="nav-link <%= currentPath.startsWith('/games') ? 'active' : '' %>" href="/games">Games</a></li>
+        <li class="nav-item"><a class="nav-link <%= currentPath.startsWith('/search') ? 'active' : '' %>" href="/search">Search</a></li>
+        <% if (isModerator) { %><li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li><% } %>
+      </ul>
+      <form class="nav-search position-relative me-lg-3" action="/search" method="get" autocomplete="off">
+        <i class="bi bi-search"></i>
+        <input class="form-control" name="q" type="search" placeholder="Search the vault" data-autocomplete>
+        <div class="autocomplete-panel" data-autocomplete-results></div>
+      </form>
+      <div class="d-flex gap-2">
+        <% if (user) { %>
+          <a class="btn btn-outline-info btn-sm" href="/profile"><i class="bi bi-person-circle"></i> Profile</a>
+          <form action="/auth/logout" method="post">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="btn btn-cyan btn-sm">Log out</button>
+          </form>
+        <% } else { %>
+          <a class="btn btn-outline-info btn-sm" href="/auth/login">Log in</a>
+          <a class="btn btn-cyan btn-sm" href="/auth/register">Join</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</nav>

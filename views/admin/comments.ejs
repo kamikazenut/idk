@@ -1,0 +1,36 @@
+<form action="/admin/comments/bulk" method="post" class="admin-panel">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="panel-head">
+    <h2>Moderation Queue</h2>
+    <div class="bulk-actions">
+      <select class="form-select form-select-sm" name="action">
+        <option value="approve">Approve</option>
+        <option value="reject">Reject</option>
+        <option value="delete">Delete</option>
+      </select>
+      <button class="btn btn-sm btn-primary">Apply</button>
+    </div>
+  </div>
+  <div class="comment-admin-list">
+    <% comments.forEach((comment) => { %>
+      <article class="comment-admin-item <%= comment.is_approved ? 'approved' : 'pending' %>">
+        <input class="form-check-input" type="checkbox" name="comment_ids" value="<%= comment.id %>">
+        <div>
+          <div class="comment-admin-meta">
+            <strong><%= comment.profiles?.username || 'User' %></strong>
+            <span><%= comment.games?.title || 'Game' %></span>
+            <time><%= new Date(comment.created_at).toLocaleString() %></time>
+          </div>
+          <p><%= comment.body %></p>
+          <div class="d-flex flex-wrap gap-2">
+            <button formaction="/admin/comments/<%= comment.id %>/approve" class="btn btn-sm btn-outline-success">Approve</button>
+            <button formaction="/admin/comments/<%= comment.id %>/reject" class="btn btn-sm btn-outline-warning">Reject</button>
+            <button formaction="/admin/comments/<%= comment.id %>/pin" name="is_pinned" value="<%= comment.is_pinned ? 'false' : 'true' %>" class="btn btn-sm btn-outline-primary"><%= comment.is_pinned ? 'Unpin' : 'Pin' %></button>
+            <button formaction="/admin/comments/<%= comment.id %>?_method=DELETE" class="btn btn-sm btn-outline-danger" data-confirm="Delete this comment?">Delete</button>
+          </div>
+        </div>
+      </article>
+    <% }) %>
+    <% if (!comments.length) { %><p class="text-secondary mb-0">No comments yet.</p><% } %>
+  </div>
+</form>

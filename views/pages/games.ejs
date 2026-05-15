@@ -1,0 +1,91 @@
+<section class="page-header">
+  <div class="container">
+    <span class="eyebrow">Library</span>
+    <h1>Browse Games</h1>
+    <p>Filter public domain games by genre, platform, release decade, community rating, and download activity.</p>
+  </div>
+</section>
+
+<section class="container py-4">
+  <form class="filter-panel" action="/games" method="get">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label">Genre</label>
+        <select class="form-select" name="genre">
+          <option value="">Any genre</option>
+          <% filters.genres.forEach((genre) => { %>
+            <option value="<%= genre %>" <%= query.genre === genre ? 'selected' : '' %>><%= genre %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Platform</label>
+        <select class="form-select" name="platform">
+          <option value="">Any platform</option>
+          <% filters.platforms.forEach((platform) => { %>
+            <option value="<%= platform %>" <%= query.platform === platform ? 'selected' : '' %>><%= platform %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Decade</label>
+        <select class="form-select" name="decade">
+          <option value="">Any decade</option>
+          <% filters.decades.forEach((decade) => { %>
+            <option value="<%= decade %>" <%= Number(query.decade) === decade ? 'selected' : '' %>><%= decade %>s</option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Rating</label>
+        <select class="form-select" name="rating">
+          <option value="">Any rating</option>
+          <% [4,3,2,1].forEach((rating) => { %>
+            <option value="<%= rating %>" <%= Number(query.rating) === rating ? 'selected' : '' %>><%= rating %>+ stars</option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Sort</label>
+        <select class="form-select" name="sort">
+          <option value="newest" <%= query.sort === 'newest' || !query.sort ? 'selected' : '' %>>Newest</option>
+          <option value="downloads" <%= query.sort === 'downloads' ? 'selected' : '' %>>Most downloaded</option>
+          <option value="rating" <%= query.sort === 'rating' ? 'selected' : '' %>>Top rated</option>
+          <option value="az" <%= query.sort === 'az' ? 'selected' : '' %>>A-Z</option>
+        </select>
+      </div>
+      <div class="col-12 d-flex flex-wrap gap-2 align-items-center">
+        <button class="btn btn-cyan"><i class="bi bi-funnel"></i> Apply filters</button>
+        <a class="btn btn-outline-info" href="/games">Reset</a>
+        <% tags.slice(0, 12).forEach((tag) => { %>
+          <a href="/games?tag=<%= tag.slug %>" class="tag-chip" style="--tag-color:<%= tag.color_hex %>"><%= tag.name %></a>
+        <% }) %>
+      </div>
+    </div>
+  </form>
+</section>
+
+<section class="container pb-5">
+  <% if (games.length) { %>
+    <div class="game-grid" data-infinite-grid>
+      <% games.forEach((game) => { %>
+        <%- include('../partials/game-card', { game }) %>
+      <% }) %>
+    </div>
+    <div class="pagination-row">
+      <% if (page > 1) { %>
+        <a class="btn btn-outline-info" href="/games?<%= new URLSearchParams({ ...query, page: page - 1 }).toString() %>">Previous</a>
+      <% } %>
+      <span>Page <%= page %> of <%= totalPages %></span>
+      <% if (page < totalPages) { %>
+        <a class="btn btn-cyan" data-next-page href="/games?<%= new URLSearchParams({ ...query, page: page + 1 }).toString() %>">Next</a>
+      <% } %>
+    </div>
+  <% } else { %>
+    <div class="empty-state">
+      <h2>No games match those filters.</h2>
+      <p>Try widening the search or adding more published games from the admin panel.</p>
+      <a class="btn btn-cyan" href="/games">Reset filters</a>
+    </div>
+  <% } %>
+</section>

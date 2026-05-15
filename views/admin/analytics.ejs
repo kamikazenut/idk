@@ -1,0 +1,41 @@
+<section class="admin-grid">
+  <div class="admin-panel">
+    <div class="panel-head"><h2>Downloads Over Time</h2><span>30 days</span></div>
+    <canvas id="downloadTrend" data-labels='<%- JSON.stringify(analytics.trend.labels) %>' data-values='<%- JSON.stringify(analytics.trend.values) %>' height="130"></canvas>
+  </div>
+  <div class="admin-panel">
+    <div class="panel-head"><h2>User Registrations</h2><span>Recent</span></div>
+    <canvas id="registrationTrend" data-labels='<%- JSON.stringify(analytics.registrations.labels) %>' data-values='<%- JSON.stringify(analytics.registrations.values) %>' height="130"></canvas>
+  </div>
+</section>
+
+<section class="admin-grid mt-4">
+  <div class="admin-panel">
+    <div class="panel-head"><h2>Top 10 Downloads</h2></div>
+    <table class="table align-middle">
+      <tbody>
+        <% analytics.topGames.forEach((game, index) => { %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><a href="/games/<%= game.slug %>"><%= game.title %></a></td>
+            <td class="text-end"><%= Number(game.download_count || 0).toLocaleString() %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <div class="admin-panel">
+    <div class="panel-head"><h2>Top Search Terms</h2></div>
+    <table class="table align-middle">
+      <tbody>
+        <% analytics.topSearchTerms.forEach((term) => { %>
+          <tr>
+            <td><%= term.term %></td>
+            <td class="text-end"><%= term.count %></td>
+          </tr>
+        <% }) %>
+        <% if (!analytics.topSearchTerms.length) { %><tr><td>No search events yet.</td><td></td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</section>

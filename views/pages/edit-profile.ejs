@@ -1,0 +1,14 @@
+<section class="auth-page">
+  <form action="/profile/edit" method="post" class="auth-card wide">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <span class="eyebrow">Account</span>
+    <h1>Edit Profile</h1>
+    <label class="form-label">Username</label>
+    <input class="form-control" name="username" value="<%= profile?.username || '' %>" required maxlength="80">
+    <label class="form-label mt-3">Avatar URL</label>
+    <input class="form-control" name="avatar_url" value="<%= profile?.avatar_url || '' %>">
+    <label class="form-label mt-3">Bio</label>
+    <textarea class="form-control" name="bio" rows="5" maxlength="500"><%= profile?.bio || '' %></textarea>
+    <button class="btn btn-cyan mt-4">Save profile</button>
+  </form>
+</section>

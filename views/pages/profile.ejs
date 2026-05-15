@@ -1,0 +1,52 @@
+<section class="page-header profile-header">
+  <div class="container profile-top">
+    <img src="<%= profile?.avatar_url || '/uploads/placeholder-cover.svg' %>" alt="" class="profile-avatar">
+    <div>
+      <span class="eyebrow"><%= profile?.role || 'user' %></span>
+      <h1><%= profile?.username || user?.email || 'Player' %></h1>
+      <p><%= profile?.bio || 'No bio yet.' %></p>
+      <% if (editable) { %><a class="btn btn-cyan" href="/profile/edit"><i class="bi bi-pencil"></i> Edit profile</a><% } %>
+    </div>
+  </div>
+</section>
+
+<section class="container py-5">
+  <div class="profile-grid">
+    <div class="content-panel">
+      <h2>Wishlist</h2>
+      <div class="compact-list">
+        <% wishlist.forEach((item) => { if (item.games) { %>
+          <a href="/games/<%= item.games.slug %>" class="compact-game">
+            <img src="<%= item.games.cover_image_url || '/uploads/placeholder-cover.svg' %>" alt="">
+            <span class="compact-title"><%= item.games.title %><small><%= new Date(item.created_at).toLocaleDateString() %></small></span>
+          </a>
+        <% } }) %>
+        <% if (!wishlist.length) { %><p class="muted">No wishlist games yet.</p><% } %>
+      </div>
+    </div>
+    <div class="content-panel">
+      <h2>Recent Comments</h2>
+      <div class="timeline-list">
+        <% comments.forEach((comment) => { %>
+          <a href="/games/<%= comment.games?.slug %>">
+            <strong><%= comment.games?.title || 'Game' %></strong>
+            <span><%= comment.body.slice(0, 140) %></span>
+          </a>
+        <% }) %>
+        <% if (!comments.length) { %><p class="muted">No comments yet.</p><% } %>
+      </div>
+    </div>
+    <div class="content-panel">
+      <h2>Ratings Given</h2>
+      <div class="timeline-list">
+        <% ratings.forEach((rating) => { %>
+          <a href="/games/<%= rating.games?.slug %>">
+            <strong><%= rating.games?.title || 'Game' %></strong>
+            <span><%= rating.score %> / 5 stars</span>
+          </a>
+        <% }) %>
+        <% if (!ratings.length) { %><p class="muted">No ratings yet.</p><% } %>
+      </div>
+    </div>
+  </div>
+</section>

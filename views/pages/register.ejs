@@ -1,0 +1,19 @@
+<section class="auth-page">
+  <form action="/auth/register" method="post" class="auth-card">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <span class="eyebrow">Join the archive</span>
+    <h1>Create Account</h1>
+    <label class="form-label">Username</label>
+    <input class="form-control" name="username" required maxlength="80" autocomplete="username">
+    <label class="form-label mt-3">Email</label>
+    <input class="form-control" type="email" name="email" required autocomplete="email">
+    <label class="form-label mt-3">Password</label>
+    <input class="form-control" type="password" name="password" required minlength="8" autocomplete="new-password">
+    <button class="btn btn-cyan w-100 mt-4">Create account</button>
+    <div class="oauth-row">
+      <a class="btn btn-outline-info" href="/auth/oauth/github"><i class="bi bi-github"></i> GitHub</a>
+      <a class="btn btn-outline-info" href="/auth/oauth/google"><i class="bi bi-google"></i> Google</a>
+    </div>
+    <p class="auth-switch">Already have an account? <a href="/auth/login">Log in</a></p>
+  </form>
+</section>

@@ -1,0 +1,36 @@
+<section class="page-header">
+  <div class="container">
+    <span class="eyebrow">Find a title</span>
+    <h1>Search Games</h1>
+    <form class="hero-search position-relative mt-4" action="/search" method="get" autocomplete="off">
+      <i class="bi bi-search"></i>
+      <input class="form-control form-control-lg" name="q" value="<%= query.q || '' %>" placeholder="Title, description, developer, tag, platform" data-autocomplete>
+      <button class="btn btn-cyan btn-lg">Search</button>
+      <div class="autocomplete-panel" data-autocomplete-results></div>
+    </form>
+  </div>
+</section>
+
+<section class="container py-4">
+  <div class="d-flex flex-wrap gap-2 mb-4">
+    <% tags.slice(0, 20).forEach((tag) => { %>
+      <a class="tag-chip" style="--tag-color:<%= tag.color_hex %>" href="/search?q=<%= encodeURIComponent(query.q || '') %>&tag=<%= tag.slug %>"><%= tag.name %></a>
+    <% }) %>
+  </div>
+  <% if (games.length) { %>
+    <div class="section-heading">
+      <h2><%= total %> result<%= total === 1 ? '' : 's' %></h2>
+      <a href="/games" class="section-link">Browse all</a>
+    </div>
+    <div class="game-grid">
+      <% games.forEach((game) => { %>
+        <%- include('../partials/game-card', { game }) %>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <div class="empty-state">
+      <h2>No results yet.</h2>
+      <p>Try another title, studio, platform, genre, or tag.</p>
+    </div>
+  <% } %>
+</section>

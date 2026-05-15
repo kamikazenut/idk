@@ -1,0 +1,18 @@
+<section class="auth-page">
+  <form action="/auth/login" method="post" class="auth-card">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="hidden" name="next" value="<%= next %>">
+    <span class="eyebrow">Welcome back</span>
+    <h1>Log In</h1>
+    <label class="form-label">Email</label>
+    <input class="form-control" type="email" name="email" required autocomplete="email">
+    <label class="form-label mt-3">Password</label>
+    <input class="form-control" type="password" name="password" required autocomplete="current-password">
+    <button class="btn btn-cyan w-100 mt-4">Log in</button>
+    <div class="oauth-row">
+      <a class="btn btn-outline-info" href="/auth/oauth/github"><i class="bi bi-github"></i> GitHub</a>
+      <a class="btn btn-outline-info" href="/auth/oauth/google"><i class="bi bi-google"></i> Google</a>
+    </div>
+    <p class="auth-switch">New here? <a href="/auth/register">Create an account</a></p>
+  </form>
+</section>

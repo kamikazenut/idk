@@ -1,0 +1,52 @@
+<div class="admin-actions">
+  <form action="/admin/users" method="get" class="admin-search">
+    <input class="form-control" name="q" value="<%= query.q || '' %>" placeholder="Search users">
+    <button class="btn btn-primary">Search</button>
+  </form>
+</div>
+
+<div class="admin-panel">
+  <table class="table table-hover align-middle admin-table" data-datatable>
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Joined</th>
+        <th>Activity</th>
+        <th>Role</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% users.forEach((item) => { %>
+        <tr>
+          <td>
+            <div class="table-game">
+              <img src="<%= item.avatar_url || '/uploads/placeholder-cover.svg' %>" alt="">
+              <div><strong><%= item.username || 'User' %></strong><small><%= item.id %></small></div>
+            </div>
+          </td>
+          <td><%= new Date(item.created_at).toLocaleDateString() %></td>
+          <td><%= item.stats.downloads %> downloads, <%= item.stats.comments %> comments, <%= item.stats.ratings %> ratings</td>
+          <td>
+            <form action="/admin/users/<%= item.id %>/role" method="post" class="inline-form">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <select class="form-select form-select-sm" name="role">
+                <% ['user','moderator','admin'].forEach((role) => { %>
+                  <option value="<%= role %>" <%= item.role === role ? 'selected' : '' %>><%= role %></option>
+                <% }) %>
+              </select>
+              <button class="btn btn-sm btn-outline-primary">Save</button>
+            </form>
+          </td>
+          <td>
+            <form action="/admin/users/<%= item.id %>/ban" method="post" class="inline-form">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input type="hidden" name="banned" value="<%= item.banned ? 'false' : 'true' %>">
+              <button class="btn btn-sm <%= item.banned ? 'btn-warning' : 'btn-outline-danger' %>"><%= item.banned ? 'Unsuspend' : 'Suspend' %></button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>

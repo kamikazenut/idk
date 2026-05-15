@@ -1,0 +1,55 @@
+<section class="stat-grid">
+  <article class="stat-card">
+    <span>Total games</span>
+    <strong><%= stats.totals.games.toLocaleString() %></strong>
+  </article>
+  <article class="stat-card">
+    <span>Downloads today</span>
+    <strong><%= stats.totals.downloadsToday.toLocaleString() %></strong>
+  </article>
+  <article class="stat-card">
+    <span>Downloads this week</span>
+    <strong><%= stats.totals.downloadsWeek.toLocaleString() %></strong>
+  </article>
+  <article class="stat-card">
+    <span>All downloads</span>
+    <strong><%= stats.totals.downloads.toLocaleString() %></strong>
+  </article>
+  <article class="stat-card">
+    <span>Users</span>
+    <strong><%= stats.totals.users.toLocaleString() %></strong>
+  </article>
+  <article class="stat-card warning">
+    <span>Pending comments</span>
+    <strong><%= stats.totals.pendingComments.toLocaleString() %></strong>
+  </article>
+</section>
+
+<section class="admin-grid mt-4">
+  <div class="admin-panel">
+    <div class="panel-head">
+      <h2>Download Trend</h2>
+      <span>Last 14 days</span>
+    </div>
+    <canvas id="downloadTrend" data-labels='<%- JSON.stringify(trend.labels) %>' data-values='<%- JSON.stringify(trend.values) %>' height="120"></canvas>
+  </div>
+  <div class="admin-panel">
+    <div class="panel-head">
+      <h2>Recent Activity</h2>
+      <span>Live feed</span>
+    </div>
+    <div class="activity-list">
+      <% stats.activity.forEach((item) => { %>
+        <div class="activity-item">
+          <span class="activity-icon"><i class="bi <%= item.type === 'download' ? 'bi-download' : 'bi-chat-square-text' %>"></i></span>
+          <div>
+            <strong><%= item.type === 'download' ? 'Download' : 'Comment' %></strong>
+            <p><%= item.games?.title || item.body || 'Activity' %></p>
+            <time><%= new Date(item.created_at).toLocaleString() %></time>
+          </div>
+        </div>
+      <% }) %>
+      <% if (!stats.activity.length) { %><p class="text-secondary">No recent activity yet.</p><% } %>
+    </div>
+  </div>
+</section>

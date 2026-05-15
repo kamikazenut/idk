@@ -1,0 +1,121 @@
+<section class="hero-section">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">Public domain archive</span>
+        <h1>Playable history, ready to download.</h1>
+        <p>Browse public domain games across DOS, Windows, Linux, browser releases, prototypes, freeware relics, and preserved oddities.</p>
+        <form action="/search" method="get" class="hero-search position-relative" autocomplete="off">
+          <i class="bi bi-search"></i>
+          <input class="form-control form-control-lg" name="q" placeholder="Find a game, studio, genre, or platform" data-autocomplete>
+          <button class="btn btn-cyan btn-lg">Search</button>
+          <div class="autocomplete-panel" data-autocomplete-results></div>
+        </form>
+      </div>
+      <div id="featuredCarousel" class="carousel slide featured-carousel" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <% (featured.length ? featured : newest).slice(0, 5).forEach((game, index) => { %>
+            <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+              <a href="/games/<%= game.slug %>" class="spotlight-card">
+                <img src="<%= game.banner_image_url || game.cover_image_url || '/uploads/placeholder-cover.svg' %>" alt="<%= game.title %>" loading="<%= index === 0 ? 'eager' : 'lazy' %>">
+                <div class="spotlight-content">
+                  <span>Spotlight</span>
+                  <h2><%= game.title %></h2>
+                  <p><%= game.short_description || 'A featured pick from the archive.' %></p>
+                </div>
+              </a>
+            </div>
+          <% }) %>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev" aria-label="Previous featured game">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next" aria-label="Next featured game">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="filter-band">
+  <div class="container">
+    <div class="filter-scroll">
+      <a href="/games" class="filter-chip active">All games</a>
+      <% filters.genres.slice(0, 10).forEach((genre) => { %>
+        <a href="/games?genre=<%= encodeURIComponent(genre) %>" class="filter-chip"><%= genre %></a>
+      <% }) %>
+      <% filters.platforms.slice(0, 8).forEach((platform) => { %>
+        <a href="/games?platform=<%= encodeURIComponent(platform) %>" class="filter-chip"><%= platform %></a>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="container content-stack">
+  <div class="section-heading">
+    <div>
+      <span class="eyebrow">Fresh drops</span>
+      <h2>New Arrivals</h2>
+    </div>
+    <a href="/games?sort=newest" class="section-link">View all <i class="bi bi-arrow-right"></i></a>
+  </div>
+  <div class="game-grid">
+    <% newest.forEach((game) => { %>
+      <%- include('../partials/game-card', { game }) %>
+    <% }) %>
+  </div>
+</section>
+
+<section class="container content-stack">
+  <div class="split-feature">
+    <div>
+      <div class="section-heading align-items-start">
+        <div>
+          <span class="eyebrow">Crowd favorites</span>
+          <h2>Most Downloaded</h2>
+        </div>
+      </div>
+      <div class="compact-list">
+        <% downloaded.slice(0, 6).forEach((game, index) => { %>
+          <a href="/games/<%= game.slug %>" class="compact-game">
+            <span class="rank"><%= index + 1 %></span>
+            <img src="<%= game.cover_image_url || '/uploads/placeholder-cover.svg' %>" alt="">
+            <span class="compact-title"><%= game.title %><small><%= Number(game.download_count || 0).toLocaleString() %> downloads</small></span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+    <div>
+      <div class="section-heading align-items-start">
+        <div>
+          <span class="eyebrow">Player-rated</span>
+          <h2>Top Rated</h2>
+        </div>
+      </div>
+      <div class="game-grid dense">
+        <% topRated.slice(0, 4).forEach((game) => { %>
+          <%- include('../partials/game-card', { game }) %>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container content-stack pb-5">
+  <div class="random-pick">
+    <div>
+      <span class="eyebrow">Let chance pick</span>
+      <h2>Random Pick</h2>
+      <% if (randomPick) { %>
+        <p><%= randomPick.short_description || randomPick.description?.replace(/<[^>]*>?/gm, '').slice(0, 180) %></p>
+        <a class="btn btn-cyan" href="/games/<%= randomPick.slug %>">Open <%= randomPick.title %></a>
+      <% } else { %>
+        <p>Add a few published games and this section will choose one for curious players.</p>
+      <% } %>
+    </div>
+    <% if (randomPick) { %>
+      <img src="<%= randomPick.cover_image_url || '/uploads/placeholder-cover.svg' %>" alt="<%= randomPick.title %> cover" loading="lazy">
+    <% } %>
+  </div>
+</section>

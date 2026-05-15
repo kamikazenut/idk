@@ -1,0 +1,171 @@
+<section class="game-hero" style="--hero-image:url('<%= game.banner_image_url || game.cover_image_url || '/uploads/placeholder-cover.svg' %>')">
+  <div class="container">
+    <div class="game-hero-grid">
+      <img class="detail-cover" src="<%= game.cover_image_url || '/uploads/placeholder-cover.svg' %>" alt="<%= game.title %> cover">
+      <div class="detail-copy">
+        <div class="badge-row">
+          <% (game.genre || []).forEach((genre) => { %><a class="genre-badge" href="/games?genre=<%= encodeURIComponent(genre) %>"><%= genre %></a><% }) %>
+        </div>
+        <h1><%= game.title %></h1>
+        <p><%= game.short_description || 'A public domain game from the vault.' %></p>
+        <div class="detail-stats">
+          <span><i class="bi bi-star-fill"></i> <%= game.rating_average %> from <%= game.rating_count %></span>
+          <span><i class="bi bi-download"></i> <%= Number(game.download_count || 0).toLocaleString() %></span>
+          <span><i class="bi bi-eye"></i> <%= Number(game.view_count || 0).toLocaleString() %></span>
+        </div>
+        <div class="detail-actions">
+          <% if (game.active_download_links.length) { %><a class="btn btn-cyan btn-lg" href="#downloads"><i class="bi bi-download"></i> Download</a><% } %>
+          <form action="/games/<%= game.id %>/wishlist" method="post">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="btn btn-outline-info btn-lg" <%= user ? '' : 'disabled title="Login required"' %>>
+              <i class="bi <%= inWishlist ? 'bi-heart-fill' : 'bi-heart' %>"></i> Wishlist
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container detail-layout py-5">
+  <div>
+    <div class="content-panel">
+      <h2>Description</h2>
+      <div class="prose"><%- game.description || '<p>No long description has been added yet.</p>' %></div>
+    </div>
+
+    <% if ((game.screenshots || []).length) { %>
+      <div class="content-panel">
+        <h2>Screenshots</h2>
+        <div class="screenshot-grid">
+          <% game.screenshots.forEach((shot, index) => { const url = shot.url || shot; %>
+            <button class="screenshot-button" data-lightbox-src="<%= url %>">
+              <img src="<%= url %>" alt="<%= game.title %> screenshot <%= index + 1 %>" loading="lazy">
+            </button>
+          <% }) %>
+        </div>
+      </div>
+    <% } %>
+
+    <div class="content-panel" id="downloads">
+      <div class="section-heading">
+        <h2>Download Links</h2>
+        <span><%= game.active_download_links.length %> mirrors</span>
+      </div>
+      <% if (game.active_download_links.length) { %>
+        <div class="download-list">
+          <% game.active_download_links.forEach((link) => { %>
+            <div class="download-row">
+              <div>
+                <strong><%= link.label %></strong>
+                <div class="download-meta">
+                  <span><%= link.platform_target || 'All platforms' %></span>
+                  <% if (link.file_size_mb) { %><span><%= link.file_size_mb %> MB</span><% } %>
+                  <% if (link.version) { %><span>v<%= link.version %></span><% } %>
+                  <span class="source-badge"><%= link.source_type %></span>
+                </div>
+              </div>
+              <form action="/downloads/<%= link.id %>" method="post">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button class="btn btn-cyan"><i class="bi bi-box-arrow-up-right"></i> Open</button>
+              </form>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p class="muted">No active download links are available yet.</p>
+      <% } %>
+    </div>
+
+    <div class="content-panel">
+      <h2>Rate This Game</h2>
+      <% if (user) { %>
+        <form action="/games/<%= game.id %>/rate" method="post" class="rating-form">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="slug" value="<%= game.slug %>">
+          <% [1,2,3,4,5].forEach((score) => { %>
+            <button name="score" value="<%= score %>" class="<%= userRating >= score ? 'active' : '' %>" aria-label="<%= score %> stars"><i class="bi bi-star-fill"></i></button>
+          <% }) %>
+        </form>
+      <% } else { %>
+        <p><a href="/auth/login?next=/games/<%= game.slug %>">Log in</a> to rate this game.</p>
+      <% } %>
+    </div>
+
+    <div class="content-panel">
+      <h2>Comments</h2>
+      <% if (user) { %>
+        <form action="/games/<%= game.id %>/comments" method="post" class="comment-form">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <textarea class="form-control" name="body" rows="4" required maxlength="2000" placeholder="Add a comment for moderation"></textarea>
+          <button class="btn btn-cyan mt-3">Submit comment</button>
+        </form>
+      <% } else { %>
+        <p><a href="/auth/login?next=/games/<%= game.slug %>">Log in</a> to join the discussion.</p>
+      <% } %>
+      <div class="comment-list">
+        <% comments.forEach((comment) => { %>
+          <article class="comment-item <%= comment.parent_id ? 'comment-reply' : '' %>">
+            <div class="comment-avatar"><%= (comment.profiles?.username || 'U').slice(0, 1).toUpperCase() %></div>
+            <div>
+              <div class="comment-head">
+                <strong><%= comment.profiles?.username || 'Player' %></strong>
+                <% if (comment.is_pinned) { %><span class="source-badge">Pinned</span><% } %>
+                <time><%= new Date(comment.created_at).toLocaleDateString() %></time>
+              </div>
+              <p><%= comment.body %></p>
+              <% if (user) { %>
+                <form action="/games/<%= game.id %>/comments" method="post" class="reply-form">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="parent_id" value="<%= comment.id %>">
+                  <input class="form-control form-control-sm" name="body" placeholder="Reply">
+                </form>
+              <% } %>
+            </div>
+          </article>
+        <% }) %>
+        <% if (!comments.length) { %><p class="muted">No approved comments yet.</p><% } %>
+      </div>
+    </div>
+  </div>
+
+  <aside class="detail-sidebar">
+    <div class="content-panel">
+      <h2>Info</h2>
+      <dl class="info-list">
+        <dt>Platforms</dt><dd><%= (game.platform || []).join(', ') || 'Unknown' %></dd>
+        <dt>Released</dt><dd><%= game.release_year || 'Unknown' %></dd>
+        <dt>Developer</dt><dd><%= game.developer || 'Unknown' %></dd>
+        <dt>Publisher</dt><dd><%= game.publisher || 'Unknown' %></dd>
+      </dl>
+      <% if (game.system_requirements) { %>
+        <h3>System Requirements</h3>
+        <div class="prose small"><%- game.system_requirements %></div>
+      <% } %>
+    </div>
+    <div class="content-panel">
+      <h2>Share</h2>
+      <div class="share-row">
+        <a class="btn btn-outline-info btn-sm" href="https://twitter.com/intent/tweet?url=<%= encodeURIComponent(`${baseUrl}/games/${game.slug}`) %>&text=<%= encodeURIComponent(game.title) %>">X</a>
+        <a class="btn btn-outline-info btn-sm" href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(`${baseUrl}/games/${game.slug}`) %>">Facebook</a>
+        <button class="btn btn-outline-info btn-sm" data-copy-url="<%= `${baseUrl}/games/${game.slug}` %>"><i class="bi bi-link-45deg"></i></button>
+      </div>
+    </div>
+    <div class="content-panel">
+      <h2>Related</h2>
+      <div class="related-list">
+        <% relatedGames.forEach((related) => { %>
+          <a href="/games/<%= related.slug %>">
+            <img src="<%= related.cover_image_url || '/uploads/placeholder-cover.svg' %>" alt="">
+            <span><%= related.title %><small><%= (related.genre || []).slice(0, 2).join(', ') %></small></span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  </aside>
+</section>
+
+<div class="lightbox" data-lightbox>
+  <button aria-label="Close" data-lightbox-close><i class="bi bi-x-lg"></i></button>
+  <img src="" alt="">
+</div>

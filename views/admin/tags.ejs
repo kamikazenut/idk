@@ -1,0 +1,33 @@
+<section class="admin-grid">
+  <form action="/admin/tags" method="post" class="admin-panel">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="panel-head"><h2>Create Tag</h2></div>
+    <label class="form-label">Name</label>
+    <input class="form-control" name="name" required>
+    <label class="form-label mt-3">Slug</label>
+    <input class="form-control" name="slug">
+    <label class="form-label mt-3">Description</label>
+    <textarea class="form-control" name="description" rows="3"></textarea>
+    <label class="form-label mt-3">Color</label>
+    <input class="form-control form-control-color" name="color_hex" type="color" value="#32d9ff">
+    <button class="btn btn-primary mt-4">Create Tag</button>
+  </form>
+  <div class="admin-panel">
+    <div class="panel-head"><h2>Existing Tags</h2></div>
+    <div class="tag-admin-list">
+      <% tags.forEach((tag) => { %>
+        <form action="/admin/tags/<%= tag.id %>?_method=PUT" method="post" class="tag-admin-row">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input class="form-control" name="name" value="<%= tag.name %>">
+          <input class="form-control" name="slug" value="<%= tag.slug %>">
+          <input class="form-control form-control-color" name="color_hex" type="color" value="<%= tag.color_hex || '#32d9ff' %>">
+          <button class="btn btn-sm btn-outline-primary">Save</button>
+          <button form="delete-tag-<%= tag.id %>" class="btn btn-sm btn-outline-danger" data-confirm="Delete this tag?">Delete</button>
+        </form>
+        <form id="delete-tag-<%= tag.id %>" action="/admin/tags/<%= tag.id %>?_method=DELETE" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        </form>
+      <% }) %>
+    </div>
+  </div>
+</section>
