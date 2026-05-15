@@ -29,11 +29,30 @@ const adminTagRoutes = require('./routes/admin/tags');
 
 const app = express();
 const port = process.env.PORT || 3000;
+const trustProxy = process.env.TRUST_PROXY === 'false' ? false : Number(process.env.TRUST_PROXY || 1);
+
+app.set('trust proxy', trustProxy);
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.set('layout', 'layouts/main');
 app.use(expressLayouts);
+
+app.use((req, res, next) => {
+  if (!/%3f/i.test(req.url)) return next();
+
+  try {
+    const decodedUrl = decodeURIComponent(req.url);
+    const isLocalPath = decodedUrl.startsWith('/') && !/^\/https?:/i.test(decodedUrl);
+    if (isLocalPath && decodedUrl.includes('?')) {
+      return res.redirect(301, decodedUrl);
+    }
+  } catch (error) {
+    return next();
+  }
+
+  return next();
+});
 
 app.use(helmet({
   contentSecurityPolicy: {
