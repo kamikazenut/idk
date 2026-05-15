@@ -1,0 +1,191 @@
+<section class="game-hero mod-hero" style="--hero-image:url('<%= mod.cover_image_url || modGame.banner_image_url || modGame.cover_image_url || '/uploads/placeholder-cover.svg' %>')">
+  <div class="container">
+    <div class="game-hero-grid">
+      <img class="detail-cover" src="<%= mod.cover_image_url || modGame.cover_image_url || '/uploads/placeholder-cover.svg' %>" alt="<%= mod.title %> cover">
+      <div class="detail-copy">
+        <div class="badge-row">
+          <a class="genre-badge" href="/mods/<%= modGame.slug %>"><%= modGame.title %></a>
+          <% if (mod.mod_categories) { %>
+            <a class="genre-badge" href="/mods/<%= modGame.slug %>?category=<%= mod.mod_categories.slug %>" style="--tag-color:<%= mod.mod_categories.color_hex %>"><%= mod.mod_categories.name %></a>
+          <% } %>
+        </div>
+        <span class="eyebrow">Mod download</span>
+        <h1><%= mod.title %></h1>
+        <p><%= mod.summary || `A community file for ${modGame.title}.` %></p>
+        <div class="detail-stats">
+          <span><i class="bi bi-star-fill"></i> <%= mod.rating_average %> from <%= mod.rating_count %></span>
+          <span><i class="bi bi-download"></i> <%= Number(mod.download_count || 0).toLocaleString() %></span>
+          <span><i class="bi bi-eye"></i> <%= Number(mod.view_count || 0).toLocaleString() %></span>
+        </div>
+        <div class="detail-actions">
+          <% if (mod.active_download_links.length) { %><a class="btn btn-cyan btn-lg" href="#mod-downloads"><i class="bi bi-download"></i> Download Mod</a><% } %>
+          <a class="btn btn-outline-info btn-lg" href="/mods/<%= modGame.slug %>"><i class="bi bi-collection"></i> More <%= modGame.title %> Mods</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container detail-layout py-5">
+  <div>
+    <div class="content-panel">
+      <h2>About This Mod</h2>
+      <div class="prose"><%- mod.description || '<p>No long description has been added yet.</p>' %></div>
+    </div>
+
+    <% if ((mod.screenshots || []).length) { %>
+      <div class="content-panel">
+        <h2>Screenshots</h2>
+        <div class="screenshot-grid">
+          <% mod.screenshots.forEach((shot, index) => { const url = shot.url || shot; %>
+            <button class="screenshot-button" data-lightbox-src="<%= url %>">
+              <img src="<%= url %>" alt="<%= mod.title %> screenshot <%= index + 1 %>" loading="lazy">
+            </button>
+          <% }) %>
+        </div>
+      </div>
+    <% } %>
+
+    <div class="content-panel" id="mod-downloads">
+      <div class="section-heading">
+        <h2>Mod Download Links</h2>
+        <span><%= mod.active_download_links.length %> mirrors</span>
+      </div>
+      <% if (mod.active_download_links.length) { %>
+        <div class="download-list">
+          <% mod.active_download_links.forEach((link) => { %>
+            <div class="download-row mod-download-row">
+              <div>
+                <strong><%= link.label %></strong>
+                <div class="download-meta">
+                  <% if (link.file_size_mb) { %><span><%= link.file_size_mb %> MB</span><% } %>
+                  <% if (link.version || mod.version) { %><span>v<%= link.version || mod.version %></span><% } %>
+                  <span class="source-badge"><%= link.source_type %></span>
+                </div>
+              </div>
+              <form action="/mod-downloads/<%= link.id %>" method="post">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button class="btn btn-cyan"><i class="bi bi-box-arrow-up-right"></i> Open</button>
+              </form>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p class="muted">No active mod download links are available yet.</p>
+      <% } %>
+    </div>
+
+    <% if (mod.install_instructions) { %>
+      <div class="content-panel">
+        <h2>Install Instructions</h2>
+        <div class="prose"><%- mod.install_instructions %></div>
+      </div>
+    <% } %>
+
+    <div class="content-panel">
+      <h2>Rate This Mod</h2>
+      <% if (user) { %>
+        <form action="/mods/<%= mod.id %>/rate" method="post" class="rating-form">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <% [1,2,3,4,5].forEach((score) => { %>
+            <button name="score" value="<%= score %>" class="<%= userRating >= score ? 'active' : '' %>" aria-label="<%= score %> stars"><i class="bi bi-star-fill"></i></button>
+          <% }) %>
+        </form>
+      <% } else { %>
+        <p><a href="/auth/login?next=/mods/<%= modGame.slug %>/<%= mod.slug %>">Log in</a> to rate this mod.</p>
+      <% } %>
+    </div>
+
+    <div class="content-panel">
+      <h2>Comments</h2>
+      <% if (user) { %>
+        <form action="/mods/<%= mod.id %>/comments" method="post" class="comment-form">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <textarea class="form-control" name="body" rows="4" required maxlength="2000" placeholder="Add a mod comment for moderation"></textarea>
+          <button class="btn btn-cyan mt-3">Submit comment</button>
+        </form>
+      <% } else { %>
+        <p><a href="/auth/login?next=/mods/<%= modGame.slug %>/<%= mod.slug %>">Log in</a> to join the discussion.</p>
+      <% } %>
+      <div class="comment-list">
+        <% comments.forEach((comment) => { %>
+          <article class="comment-item">
+            <div class="comment-avatar"><%= (comment.profiles?.username || 'U').slice(0, 1).toUpperCase() %></div>
+            <div>
+              <div class="comment-head">
+                <strong><%= comment.profiles?.username || 'Player' %></strong>
+                <% if (comment.is_pinned) { %><span class="source-badge">Pinned</span><% } %>
+                <time><%= new Date(comment.created_at).toLocaleDateString() %></time>
+              </div>
+              <p><%= comment.body %></p>
+              <% if (user) { %>
+                <form action="/mods/<%= mod.id %>/comments" method="post" class="reply-form">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="parent_id" value="<%= comment.id %>">
+                  <input class="form-control form-control-sm" name="body" placeholder="Reply">
+                </form>
+              <% } %>
+              <% (comment.replies || []).forEach((reply) => { %>
+                <article class="comment-item comment-reply">
+                  <div class="comment-avatar"><%= (reply.profiles?.username || 'U').slice(0, 1).toUpperCase() %></div>
+                  <div>
+                    <div class="comment-head">
+                      <strong><%= reply.profiles?.username || 'Player' %></strong>
+                      <time><%= new Date(reply.created_at).toLocaleDateString() %></time>
+                    </div>
+                    <p><%= reply.body %></p>
+                  </div>
+                </article>
+              <% }) %>
+            </div>
+          </article>
+        <% }) %>
+        <% if (!comments.length) { %><p class="muted">No approved comments yet.</p><% } %>
+      </div>
+    </div>
+  </div>
+
+  <aside class="detail-sidebar">
+    <div class="content-panel">
+      <h2>Mod Info</h2>
+      <dl class="info-list">
+        <dt>Game hub</dt><dd><a href="/mods/<%= modGame.slug %>"><%= modGame.title %></a></dd>
+        <dt>Category</dt><dd><%= mod.mod_categories?.name || 'General' %></dd>
+        <dt>Author</dt><dd><%= mod.author_name || 'Unknown' %></dd>
+        <dt>Version</dt><dd><%= mod.version || 'Unknown' %></dd>
+        <dt>File size</dt><dd><%= mod.file_size_mb ? `${mod.file_size_mb} MB` : 'Unknown' %></dd>
+      </dl>
+      <% if ((mod.supported_versions || []).length) { %>
+        <h3>Supported Versions</h3>
+        <div class="badge-row">
+          <% mod.supported_versions.forEach((version) => { %><span class="source-badge"><%= version %></span><% }) %>
+        </div>
+      <% } %>
+    </div>
+    <div class="content-panel">
+      <h2>Share</h2>
+      <div class="share-row">
+        <a class="btn btn-outline-info btn-sm" href="https://twitter.com/intent/tweet?url=<%= encodeURIComponent(`${baseUrl}/mods/${modGame.slug}/${mod.slug}`) %>&text=<%= encodeURIComponent(mod.title) %>">X</a>
+        <a class="btn btn-outline-info btn-sm" href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(`${baseUrl}/mods/${modGame.slug}/${mod.slug}`) %>">Facebook</a>
+        <button class="btn btn-outline-info btn-sm" data-copy-url="<%= `${baseUrl}/mods/${modGame.slug}/${mod.slug}` %>"><i class="bi bi-link-45deg"></i></button>
+      </div>
+    </div>
+    <div class="content-panel">
+      <h2>Related Mods</h2>
+      <div class="related-list">
+        <% relatedMods.forEach((related) => { %>
+          <a href="/mods/<%= modGame.slug %>/<%= related.slug %>">
+            <img src="<%= related.cover_image_url || modGame.cover_image_url || '/uploads/placeholder-cover.svg' %>" alt="">
+            <span><%= related.title %><small><%= related.mod_categories?.name || modGame.title %></small></span>
+          </a>
+        <% }) %>
+        <% if (!relatedMods.length) { %><p class="muted mb-0">No related mods yet.</p><% } %>
+      </div>
+    </div>
+  </aside>
+</section>
+
+<div class="lightbox" data-lightbox>
+  <button aria-label="Close" data-lightbox-close><i class="bi bi-x-lg"></i></button>
+  <img src="" alt="">
+</div>

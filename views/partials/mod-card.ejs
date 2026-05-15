@@ -1,0 +1,27 @@
+<article class="game-card mod-card h-100">
+  <a href="/mods/<%= mod.mod_games?.slug || 'archive' %>/<%= mod.slug %>" class="game-cover-link">
+    <img src="<%= mod.cover_image_url || mod.mod_games?.cover_image_url || '/uploads/placeholder-cover.svg' %>" alt="<%= mod.title %> cover" loading="lazy" class="game-cover">
+    <div class="game-overlay">
+      <p><%= mod.summary || 'Open the mod page for details, install notes, and download links.' %></p>
+      <span class="btn btn-cyan btn-sm"><i class="bi bi-puzzle"></i> Mod details</span>
+    </div>
+  </a>
+  <div class="game-card-body">
+    <div class="d-flex justify-content-between align-items-start gap-2">
+      <h3><a href="/mods/<%= mod.mod_games?.slug || 'archive' %>/<%= mod.slug %>"><%= mod.title %></a></h3>
+      <span class="rating-pill"><i class="bi bi-star-fill"></i> <%= mod.rating_average || '0.0' %></span>
+    </div>
+    <div class="badge-row">
+      <% if (mod.mod_categories) { %>
+        <a class="genre-badge" style="--tag-color:<%= mod.mod_categories.color_hex %>" href="/mods?category=<%= mod.mod_categories.slug %>"><%= mod.mod_categories.name %></a>
+      <% } %>
+      <% if (mod.mod_games) { %>
+        <a class="genre-badge" href="/mods/<%= mod.mod_games.slug %>"><%= mod.mod_games.title %></a>
+      <% } %>
+    </div>
+    <div class="game-meta">
+      <span><i class="bi bi-download"></i> <%= Number(mod.download_count || 0).toLocaleString() %></span>
+      <span><i class="bi bi-tag"></i> <%= mod.version ? `v${mod.version}` : 'Mod' %></span>
+    </div>
+  </div>
+</article>

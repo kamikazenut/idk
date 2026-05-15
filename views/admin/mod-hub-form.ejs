@@ -1,0 +1,64 @@
+<form action="<%= action %><%= action.includes('?') ? '&' : '?' %>_csrf=<%= csrfToken %>" method="post" enctype="multipart/form-data" class="admin-form">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="admin-grid">
+    <div class="admin-panel">
+      <div class="panel-head">
+        <h2>Mod Hub Details</h2>
+        <span><%= modGame ? 'Editing' : 'New hub' %></span>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-8">
+          <label class="form-label">Title</label>
+          <input class="form-control" name="title" required value="<%= modGame?.title || '' %>" placeholder="Minecraft, GTA V, Garry's Mod">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Slug</label>
+          <input class="form-control" name="slug" value="<%= modGame?.slug || '' %>" placeholder="minecraft">
+        </div>
+        <div class="col-12">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" name="description" rows="8"><%= modGame?.description || '' %></textarea>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Optional Linked Game</label>
+          <select class="form-select" name="game_id">
+            <option value="">Standalone mod hub</option>
+            <% games.forEach((game) => { %>
+              <option value="<%= game.id %>" <%= modGame?.game_id === game.id ? 'selected' : '' %>><%= game.title %></option>
+            <% }) %>
+          </select>
+          <div class="form-text">Use this only when a normal game page exists and you want it to show a small mods preview.</div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="admin-panel">
+      <div class="panel-head"><h2>Publishing</h2></div>
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" name="is_published" id="isPublished" <%= modGame?.is_published || !modGame ? 'checked' : '' %>>
+        <label class="form-check-label" for="isPublished">Published</label>
+      </div>
+      <div class="form-check form-switch mt-2">
+        <input class="form-check-input" type="checkbox" role="switch" name="is_featured" id="isFeatured" <%= modGame?.is_featured ? 'checked' : '' %>>
+        <label class="form-check-label" for="isFeatured">Featured</label>
+      </div>
+      <hr>
+      <label class="form-label">Cover URL</label>
+      <input class="form-control" name="cover_image_url" value="<%= modGame?.cover_image_url || '' %>">
+      <label class="form-label mt-3">Upload Cover</label>
+      <input class="form-control" type="file" name="cover" accept="image/*">
+      <label class="form-label mt-3">Banner URL</label>
+      <input class="form-control" name="banner_image_url" value="<%= modGame?.banner_image_url || '' %>">
+      <label class="form-label mt-3">Upload Banner</label>
+      <input class="form-control" type="file" name="banner" accept="image/*">
+      <hr>
+      <label class="form-label">Enabled Categories</label>
+      <div class="tag-checks">
+        <% categories.forEach((category) => { %>
+          <label><input type="checkbox" name="category_ids" value="<%= category.id %>" <%= selectedCategories.includes(category.id) ? 'checked' : '' %>> <span style="--tag-color:<%= category.color_hex %>"><%= category.name %></span></label>
+        <% }) %>
+      </div>
+      <button class="btn btn-primary w-100 mt-4">Save Mod Hub</button>
+    </aside>
+  </div>
+</form>

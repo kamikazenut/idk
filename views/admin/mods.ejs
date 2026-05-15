@@ -1,0 +1,152 @@
+<div class="admin-actions">
+  <form action="/admin/mods" method="get" class="admin-search">
+    <input class="form-control" name="q" value="<%= query.q || '' %>" placeholder="Search mod hubs and files">
+    <button class="btn btn-primary">Filter</button>
+  </form>
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-outline-primary" href="/admin/mods/hubs/new"><i class="bi bi-plus-lg"></i> Add Mod Hub</a>
+    <a class="btn btn-primary" href="/admin/mods/new"><i class="bi bi-plus-lg"></i> Add Mod</a>
+  </div>
+</div>
+
+<div class="stat-grid mb-4">
+  <div class="stat-card">
+    <span>Mod hubs</span>
+    <strong><%= Number(hubs.length || 0).toLocaleString() %></strong>
+  </div>
+  <div class="stat-card">
+    <span>Mods on page</span>
+    <strong><%= Number(mods.length || 0).toLocaleString() %></strong>
+  </div>
+  <div class="stat-card warning">
+    <span>Pending mod comments</span>
+    <strong><%= Number(pendingModComments || 0).toLocaleString() %></strong>
+  </div>
+</div>
+
+<section class="admin-panel mb-4">
+  <div class="panel-head">
+    <h2>Mod Hubs</h2>
+    <span>Standalone game/mod targets</span>
+  </div>
+  <table class="table table-hover align-middle admin-table" data-datatable>
+    <thead>
+      <tr>
+        <th>Hub</th>
+        <th>Linked Game</th>
+        <th>Categories</th>
+        <th>Mods</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% hubs.forEach((hub) => { %>
+        <tr>
+          <td>
+            <div class="table-game">
+              <img src="<%= hub.cover_image_url || '/uploads/placeholder-cover.svg' %>" alt="">
+              <div><strong><%= hub.title %></strong><small><%= hub.slug %></small></div>
+            </div>
+          </td>
+          <td><%= hub.linked_game?.title || 'Standalone' %></td>
+          <td><%= (hub.categories || []).map((category) => category.name).join(', ') || 'Any' %></td>
+          <td><%= Number(hub.mod_count || 0).toLocaleString() %></td>
+          <td><span class="status-pill <%= hub.is_published ? 'published' : 'draft' %>"><%= hub.is_published ? 'Published' : 'Draft' %></span></td>
+          <td class="text-end">
+            <a class="btn btn-sm btn-outline-primary" href="/admin/mods/hubs/<%= hub.id %>/edit">Edit</a>
+            <form class="d-inline" action="/admin/mods/hubs/<%= hub.id %>?_method=DELETE" method="post" data-confirm="Unpublish this mod hub?">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="btn btn-sm btn-outline-danger">Unpublish</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% if (!hubs.length) { %><p class="text-secondary mb-0">No mod hubs yet.</p><% } %>
+</section>
+
+<section class="admin-panel mb-4">
+  <div class="panel-head">
+    <h2>Mods</h2>
+    <span>Download files stay separate from game downloads</span>
+  </div>
+  <table class="table table-hover align-middle admin-table" data-datatable>
+    <thead>
+      <tr>
+        <th>Mod</th>
+        <th>Hub</th>
+        <th>Category</th>
+        <th>Downloads</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% mods.forEach((mod) => { %>
+        <tr>
+          <td>
+            <div class="table-game">
+              <img src="<%= mod.cover_image_url || mod.mod_games?.cover_image_url || '/uploads/placeholder-cover.svg' %>" alt="">
+              <div><strong><%= mod.title %></strong><small><%= mod.slug %></small></div>
+            </div>
+          </td>
+          <td><%= mod.mod_games?.title || 'Hub missing' %></td>
+          <td><%= mod.mod_categories?.name || 'General' %></td>
+          <td><%= Number(mod.download_count || 0).toLocaleString() %></td>
+          <td><span class="status-pill <%= mod.is_published && !mod.deleted_at ? 'published' : 'draft' %>"><%= mod.is_published && !mod.deleted_at ? 'Published' : 'Draft' %></span></td>
+          <td class="text-end">
+            <a class="btn btn-sm btn-outline-primary" href="/admin/mods/<%= mod.id %>/edit">Edit</a>
+            <form class="d-inline" action="/admin/mods/<%= mod.id %>?_method=DELETE" method="post" data-confirm="Unpublish this mod?">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="btn btn-sm btn-outline-danger">Unpublish</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% if (!mods.length) { %><p class="text-secondary mb-0">No mods yet.</p><% } %>
+</section>
+
+<section class="admin-panel" id="comments">
+  <div class="panel-head">
+    <h2>Mod Comments</h2>
+    <span>Approve, reject, pin, or delete</span>
+  </div>
+  <div class="comment-admin-list">
+    <% modComments.forEach((comment) => { %>
+      <article class="comment-admin-item <%= comment.is_approved ? 'approved' : 'pending' %>">
+        <span class="form-check-input"></span>
+        <div>
+          <div class="comment-admin-meta">
+            <strong><%= comment.profiles?.username || 'User' %></strong>
+            <span><%= comment.mods?.title || 'Mod' %></span>
+            <time><%= new Date(comment.created_at).toLocaleString() %></time>
+          </div>
+          <p><%= comment.body %></p>
+          <div class="d-flex flex-wrap gap-2">
+            <form action="/admin/mods/moderation/<%= comment.id %>/approve" method="post">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="btn btn-sm btn-outline-success">Approve</button>
+            </form>
+            <form action="/admin/mods/moderation/<%= comment.id %>/reject" method="post">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="btn btn-sm btn-outline-warning">Reject</button>
+            </form>
+            <form action="/admin/mods/moderation/<%= comment.id %>/pin" method="post">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button name="is_pinned" value="<%= comment.is_pinned ? 'false' : 'true' %>" class="btn btn-sm btn-outline-primary"><%= comment.is_pinned ? 'Unpin' : 'Pin' %></button>
+            </form>
+            <form action="/admin/mods/moderation/<%= comment.id %>?_method=DELETE" method="post" data-confirm="Delete this mod comment?">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="btn btn-sm btn-outline-danger">Delete</button>
+            </form>
+          </div>
+        </div>
+      </article>
+    <% }) %>
+    <% if (!modComments.length) { %><p class="text-secondary mb-0">No mod comments yet.</p><% } %>
+  </div>
+</section>

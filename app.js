@@ -20,8 +20,11 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const searchRoutes = require('./routes/search');
 const downloadRoutes = require('./routes/downloads');
+const modRoutes = require('./routes/mods');
+const modDownloadRoutes = require('./routes/modDownloads');
 const adminDashboardRoutes = require('./routes/admin/dashboard');
 const adminGameRoutes = require('./routes/admin/games');
+const adminModRoutes = require('./routes/admin/mods');
 const adminUserRoutes = require('./routes/admin/users');
 const adminCommentRoutes = require('./routes/admin/comments');
 const adminAnalyticsRoutes = require('./routes/admin/analytics');
@@ -80,7 +83,7 @@ app.use(express.static(path.join(__dirname, 'public'), {
 }));
 
 app.use(session({
-  name: 'pdgv.sid',
+  name: 'piracycloud.sid',
   secret: process.env.SESSION_SECRET || 'dev-session-secret-change-me',
   resave: false,
   saveUninitialized: false,
@@ -110,8 +113,11 @@ app.use('/games', gameRoutes);
 app.use('/auth', authRoutes);
 app.use('/search', searchRoutes);
 app.use('/downloads', downloadRoutes);
+app.use('/mods', modRoutes);
+app.use('/mod-downloads', modDownloadRoutes);
 app.use('/admin', adminDashboardRoutes);
 app.use('/admin/games', adminGameRoutes);
+app.use('/admin/mods', adminModRoutes);
 app.use('/admin/users', adminUserRoutes);
 app.use('/admin/comments', adminCommentRoutes);
 app.use('/admin/analytics', adminAnalyticsRoutes);

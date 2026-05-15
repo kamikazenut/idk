@@ -30,21 +30,45 @@ Sitemap: ${res.locals.baseUrl}/sitemap.xml
 
 router.get('/sitemap.xml', async (req, res, next) => {
   try {
-    const { data: games } = await supabaseAdmin
-      .from('games')
-      .select('slug, updated_at')
-      .eq('is_published', true)
-      .order('updated_at', { ascending: false })
-      .limit(5000);
+    const [games, modGames, mods] = await Promise.all([
+      supabaseAdmin
+        .from('games')
+        .select('slug, updated_at')
+        .eq('is_published', true)
+        .order('updated_at', { ascending: false })
+        .limit(5000),
+      supabaseAdmin
+        .from('mod_games')
+        .select('slug, updated_at')
+        .eq('is_published', true)
+        .order('updated_at', { ascending: false })
+        .limit(1000),
+      supabaseAdmin
+        .from('mods')
+        .select('slug, updated_at, mod_games(slug)')
+        .eq('is_published', true)
+        .is('deleted_at', null)
+        .order('updated_at', { ascending: false })
+        .limit(5000)
+    ]);
 
     const urls = [
       { loc: '/', lastmod: new Date().toISOString() },
       { loc: '/games', lastmod: new Date().toISOString() },
+      { loc: '/mods', lastmod: new Date().toISOString() },
       { loc: '/search', lastmod: new Date().toISOString() },
-      ...(games || []).map((game) => ({
+      ...((games.error ? [] : games.data) || []).map((game) => ({
         loc: `/games/${game.slug}`,
         lastmod: game.updated_at || new Date().toISOString()
-      }))
+      })),
+      ...(modGames.error ? [] : (modGames.data || []).map((hub) => ({
+        loc: `/mods/${hub.slug}`,
+        lastmod: hub.updated_at || new Date().toISOString()
+      }))),
+      ...(mods.error ? [] : (mods.data || []).map((mod) => ({
+        loc: `/mods/${mod.mod_games?.slug}/${mod.slug}`,
+        lastmod: mod.updated_at || new Date().toISOString()
+      })).filter((item) => !item.loc.includes('/undefined/')))
     ];
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>

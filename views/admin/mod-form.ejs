@@ -1,0 +1,136 @@
+<form action="<%= action %><%= action.includes('?') ? '&' : '?' %>_csrf=<%= csrfToken %>" method="post" enctype="multipart/form-data" class="admin-form">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="admin-grid">
+    <div class="admin-panel">
+      <div class="panel-head">
+        <h2>Mod Details</h2>
+        <span><%= mod ? 'Editing' : 'New mod' %></span>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Mod Hub</label>
+          <select class="form-select" name="mod_game_id" required>
+            <option value="">Choose hub</option>
+            <% modGames.forEach((hub) => { %>
+              <option value="<%= hub.id %>" <%= mod?.mod_game_id === hub.id ? 'selected' : '' %>><%= hub.title %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Category</label>
+          <select class="form-select" name="category_id">
+            <option value="">General</option>
+            <% categories.forEach((category) => { %>
+              <option value="<%= category.id %>" <%= mod?.category_id === category.id ? 'selected' : '' %>><%= category.name %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-md-8">
+          <label class="form-label">Title</label>
+          <input class="form-control" name="title" required value="<%= mod?.title || '' %>">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Slug</label>
+          <input class="form-control" name="slug" value="<%= mod?.slug || '' %>">
+        </div>
+        <div class="col-12">
+          <label class="form-label">Summary</label>
+          <input class="form-control" name="summary" maxlength="320" value="<%= mod?.summary || '' %>">
+        </div>
+        <div class="col-12">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" name="description" rows="8"><%= mod?.description || '' %></textarea>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Author</label>
+          <input class="form-control" name="author_name" value="<%= mod?.author_name || '' %>">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Version</label>
+          <input class="form-control" name="version" value="<%= mod?.version || '' %>">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">File Size MB</label>
+          <input class="form-control" name="file_size_mb" type="number" step="0.01" value="<%= mod?.file_size_mb || '' %>">
+        </div>
+        <div class="col-12">
+          <label class="form-label">Supported Versions</label>
+          <input class="form-control" name="supported_versions" value="<%= (mod?.supported_versions || []).join(', ') %>" placeholder="1.20.1, 1.21, FiveM">
+        </div>
+        <div class="col-12">
+          <label class="form-label">Install Instructions</label>
+          <textarea class="form-control" name="install_instructions" rows="5"><%= mod?.install_instructions || '' %></textarea>
+        </div>
+      </div>
+    </div>
+
+    <aside class="admin-panel">
+      <div class="panel-head"><h2>Publishing</h2></div>
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" name="is_published" id="isPublished" <%= mod?.is_published ? 'checked' : '' %>>
+        <label class="form-check-label" for="isPublished">Published</label>
+      </div>
+      <div class="form-check form-switch mt-2">
+        <input class="form-check-input" type="checkbox" role="switch" name="is_featured" id="isFeatured" <%= mod?.is_featured ? 'checked' : '' %>>
+        <label class="form-check-label" for="isFeatured">Featured</label>
+      </div>
+      <hr>
+      <label class="form-label">Cover URL</label>
+      <input class="form-control" name="cover_image_url" value="<%= mod?.cover_image_url || '' %>">
+      <label class="form-label mt-3">Upload Cover</label>
+      <input class="form-control" type="file" name="cover" accept="image/*">
+      <label class="form-label mt-3">Screenshot URLs</label>
+      <textarea class="form-control" name="screenshots" rows="4"><%= (mod?.screenshots || []).map((shot) => shot.url || shot).join(', ') %></textarea>
+      <label class="form-label mt-3">Upload Screenshots</label>
+      <input class="form-control" type="file" name="screenshots" accept="image/*" multiple>
+      <button class="btn btn-primary w-100 mt-4">Save Mod</button>
+    </aside>
+  </div>
+</form>
+
+<% if (mod) { %>
+  <section class="admin-panel mt-4" id="download-links">
+    <div class="panel-head">
+      <h2>Mod Download Links</h2>
+      <span>Separate from game mirrors</span>
+    </div>
+    <div class="link-manager">
+      <% (mod.mod_download_links || []).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)).forEach((link) => { %>
+        <form action="/admin/mods/<%= mod.id %>/links/<%= link.id %>?_method=PUT" method="post" class="link-row mod-link-row">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input class="form-control" name="label" value="<%= link.label %>" placeholder="Label">
+          <input class="form-control" name="url" value="<%= link.url %>" placeholder="URL">
+          <select class="form-select" name="source_type">
+            <% ['direct','torrent','external'].forEach((type) => { %>
+              <option value="<%= type %>" <%= link.source_type === type ? 'selected' : '' %>><%= type %></option>
+            <% }) %>
+          </select>
+          <input class="form-control" name="file_size_mb" type="number" step="0.01" value="<%= link.file_size_mb || '' %>" placeholder="MB">
+          <input class="form-control" name="version" value="<%= link.version || '' %>" placeholder="Version">
+          <input class="form-control" name="sort_order" type="number" value="<%= link.sort_order || 0 %>" placeholder="Order">
+          <label class="form-check"><input class="form-check-input" type="checkbox" name="is_active" <%= link.is_active ? 'checked' : '' %>> Active</label>
+          <button class="btn btn-outline-primary btn-sm">Save</button>
+          <button form="delete-mod-link-<%= link.id %>" class="btn btn-outline-danger btn-sm" data-confirm="Delete this mod download link?">Delete</button>
+        </form>
+        <form id="delete-mod-link-<%= link.id %>" action="/admin/mods/<%= mod.id %>/links/<%= link.id %>?_method=DELETE" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        </form>
+      <% }) %>
+    </div>
+    <form action="/admin/mods/<%= mod.id %>/links" method="post" class="link-row mod-link-row new-link mt-3">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input class="form-control" name="label" placeholder="Mirror 1 - Nexus/Archive/Direct" required>
+      <input class="form-control" name="url" placeholder="https://..." required>
+      <select class="form-select" name="source_type">
+        <option value="direct">direct</option>
+        <option value="torrent">torrent</option>
+        <option value="external" selected>external</option>
+      </select>
+      <input class="form-control" name="file_size_mb" type="number" step="0.01" placeholder="MB">
+      <input class="form-control" name="version" placeholder="Version">
+      <input class="form-control" name="sort_order" type="number" value="0">
+      <label class="form-check"><input class="form-check-input" type="checkbox" name="is_active" checked> Active</label>
+      <button class="btn btn-primary btn-sm">Add Link</button>
+    </form>
+  </section>
+<% } %>

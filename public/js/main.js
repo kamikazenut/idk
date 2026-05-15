@@ -121,6 +121,6 @@
   });
 
   if (csrfToken) {
-    window.pdgvCsrfToken = csrfToken;
+    window.piracyCloudCsrfToken = csrfToken;
   }
 })();

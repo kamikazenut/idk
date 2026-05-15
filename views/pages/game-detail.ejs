@@ -151,6 +151,21 @@
         <button class="btn btn-outline-info btn-sm" data-copy-url="<%= `${baseUrl}/games/${game.slug}` %>"><i class="bi bi-link-45deg"></i></button>
       </div>
     </div>
+    <% if (modHub && gameMods.length) { %>
+      <div class="content-panel">
+        <h2>Mods</h2>
+        <p class="muted">Separate community files for this game.</p>
+        <div class="related-list">
+          <% gameMods.forEach((mod) => { %>
+            <a href="/mods/<%= modHub.slug %>/<%= mod.slug %>">
+              <img src="<%= mod.cover_image_url || game.cover_image_url || '/uploads/placeholder-cover.svg' %>" alt="">
+              <span><%= mod.title %><small><%= mod.mod_categories?.name || 'Mod' %> · <%= Number(mod.download_count || 0).toLocaleString() %> downloads</small></span>
+            </a>
+          <% }) %>
+        </div>
+        <a class="btn btn-outline-info btn-sm mt-3" href="/mods/<%= modHub.slug %>">View all mods</a>
+      </div>
+    <% } %>
     <div class="content-panel">
       <h2>Related</h2>
       <div class="related-list">

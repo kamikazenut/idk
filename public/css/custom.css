@@ -333,6 +333,10 @@ h3,
   border-color: color-mix(in srgb, var(--tag-color), white 10%);
 }
 
+.muted {
+  color: var(--muted);
+}
+
 .content-stack {
   margin-top: clamp(2.5rem, 6vw, 4.5rem);
 }
@@ -578,6 +582,87 @@ h3,
 .error-panel {
   padding: clamp(2rem, 5vw, 4rem);
   text-align: center;
+}
+
+.empty-state.compact {
+  padding: 1.25rem;
+}
+
+.mods-header {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(225, 29, 72, 0.18), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent);
+}
+
+.mod-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: 1rem;
+}
+
+.mod-hub-card {
+  position: relative;
+  min-height: 15rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  padding: 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--text);
+  background:
+    linear-gradient(180deg, rgba(8, 8, 13, 0.18), rgba(8, 8, 13, 0.96)),
+    var(--hub-image);
+  background-position: center;
+  background-size: cover;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.24);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.mod-hub-card:hover {
+  color: #fff;
+  transform: translateY(-4px);
+  border-color: var(--cyan);
+  box-shadow: 0 0 34px rgba(225, 29, 72, 0.15);
+}
+
+.mod-hub-card span,
+.mod-hub-card b {
+  color: #fecdd3;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.mod-hub-card h3 {
+  margin: 0.35rem 0;
+  font-size: 1.65rem;
+}
+
+.mod-hub-card p {
+  max-height: 4.6rem;
+  overflow: hidden;
+  margin: 0;
+  color: var(--muted);
+}
+
+.mod-hub-card b {
+  display: inline-flex;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--tag-color), white 20%);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+}
+
+.mod-card .genre-badge[style],
+.mod-hero .genre-badge[style] {
+  border-color: color-mix(in srgb, var(--tag-color), white 14%);
+}
+
+.mod-download-row {
+  border-left: 3px solid var(--cyan);
 }
 
 .game-hero {

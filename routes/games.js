@@ -1,6 +1,7 @@
 const express = require('express');
 const supabaseAdmin = require('../lib/supabaseAdmin');
 const gameService = require('../services/gameService');
+const modService = require('../services/modService');
 const userService = require('../services/userService');
 const { logEvent } = require('../services/analyticsService');
 const { requireLogin } = require('../middleware/auth');
@@ -38,8 +39,9 @@ router.get('/:slug', async (req, res, next) => {
     const game = await gameService.getGameBySlug(req.params.slug);
     if (!game) return next();
 
-    const [relatedGames, comments, userRating, wishlist] = await Promise.all([
+    const [relatedGames, gameMods, comments, userRating, wishlist] = await Promise.all([
       gameService.getRelatedGames(game),
+      modService.getModsForGame(game.id, 4),
       supabaseAdmin
         .from('comments')
         .select('*, profiles(username, avatar_url)')
@@ -62,6 +64,8 @@ router.get('/:slug', async (req, res, next) => {
       metaDescription: game.short_description || `Download ${game.title} on piracy.cloud.`,
       game,
       relatedGames,
+      modHub: gameMods.hub,
+      gameMods: gameMods.mods,
       comments: comments.data || [],
       userRating: userRating.data?.score || 0,
       inWishlist: Boolean(wishlist.data?.id),

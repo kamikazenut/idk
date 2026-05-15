@@ -36,6 +36,25 @@ async function logDownload({ gameId, linkId, userId, ip, userAgent }) {
   return eventLog;
 }
 
+async function logModDownload({ modId, linkId, userId, ip, userAgent }) {
+  const payload = {
+    mod_id: modId,
+    link_id: linkId,
+    user_id: userId || null,
+    ip_hash: hashIp(ip),
+    user_agent: cleanText(userAgent, 500)
+  };
+
+  const [downloadLog, eventLog] = await Promise.all([
+    supabaseAdmin.from('mod_download_log').insert(payload),
+    logEvent({ eventType: 'download', entityId: modId, userId, metadata: { type: 'mod', link_id: linkId } })
+  ]);
+
+  if (downloadLog.error) throw downloadLog.error;
+  await supabaseAdmin.rpc('increment_mod_download_counts', { target_mod_id: modId, target_link_id: linkId });
+  return eventLog;
+}
+
 async function logSearch({ query, userId, filters = {} }) {
   await logEvent({
     eventType: 'search',
@@ -171,6 +190,7 @@ module.exports = {
   hashIp,
   logEvent,
   logDownload,
+  logModDownload,
   logSearch,
   getDashboardStats,
   getTrend,
