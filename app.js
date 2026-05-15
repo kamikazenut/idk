@@ -31,6 +31,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const host = process.env.HOST || '0.0.0.0';
 const trustProxy = process.env.TRUST_PROXY === 'false' ? false : Number(process.env.TRUST_PROXY || 1);
+const sessionMaxAgeDays = Number(process.env.SESSION_MAX_AGE_DAYS || 30);
 
 app.set('trust proxy', trustProxy);
 
@@ -87,7 +88,7 @@ app.use(session({
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.COOKIE_SECURE === 'true',
-    maxAge: 1000 * 60 * 60 * 24 * 7
+    maxAge: 1000 * 60 * 60 * 24 * sessionMaxAgeDays
   }
 }));
 

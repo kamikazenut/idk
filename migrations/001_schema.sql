@@ -97,7 +97,7 @@ create table public.tags (
   name text not null unique,
   slug text not null unique,
   description text,
-  color_hex text not null default '#32d9ff',
+  color_hex text not null default '#e11d48',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );

@@ -361,7 +361,7 @@ async function createTag(body) {
     name,
     slug: cleanText(body.slug, 160) || buildSlug(name),
     description: cleanText(body.description, 500),
-    color_hex: cleanText(body.color_hex, 20) || '#32d9ff'
+    color_hex: cleanText(body.color_hex, 20) || '#e11d48'
   };
   const { data, error } = await supabaseAdmin.from('tags').insert(payload).select().single();
   if (error) throw error;
@@ -374,7 +374,7 @@ async function updateTag(id, body) {
     name,
     slug: cleanText(body.slug, 160) || buildSlug(name),
     description: cleanText(body.description, 500),
-    color_hex: cleanText(body.color_hex, 20) || '#32d9ff'
+    color_hex: cleanText(body.color_hex, 20) || '#e11d48'
   };
   const { data, error } = await supabaseAdmin.from('tags').update(payload).eq('id', id).select().single();
   if (error) throw error;

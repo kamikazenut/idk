@@ -2,7 +2,7 @@
   <div class="container">
     <div class="hero-grid">
       <div class="hero-copy">
-        <span class="eyebrow">Game archive</span>
+        <span class="eyebrow">Public archive</span>
         <h1>Playable history, ready to download.</h1>
         <p>Browse games across DOS, Windows, Linux, browser releases, prototypes, freeware relics, and preserved oddities.</p>
         <form action="/search" method="get" class="hero-search position-relative" autocomplete="off">
@@ -53,23 +53,8 @@
 </section>
 
 <section class="container content-stack">
-  <div class="section-heading">
-    <div>
-      <span class="eyebrow">Fresh drops</span>
-      <h2>New Arrivals</h2>
-    </div>
-    <a href="/games?sort=newest" class="section-link">View all <i class="bi bi-arrow-right"></i></a>
-  </div>
-  <div class="game-grid">
-    <% newest.forEach((game) => { %>
-      <%- include('../partials/game-card', { game }) %>
-    <% }) %>
-  </div>
-</section>
-
-<section class="container content-stack">
-  <div class="split-feature">
-    <div>
+  <div class="home-lists-grid">
+    <section class="home-list-panel">
       <div class="section-heading align-items-start">
         <div>
           <span class="eyebrow">Crowd favorites</span>
@@ -85,20 +70,40 @@
           </a>
         <% }) %>
       </div>
-    </div>
-    <div>
+    </section>
+
+    <section class="home-list-panel">
+      <div class="section-heading align-items-start">
+        <div>
+          <span class="eyebrow">Fresh drops</span>
+          <h2>New Arrivals</h2>
+        </div>
+        <a href="/games?sort=newest" class="section-link">All <i class="bi bi-arrow-right"></i></a>
+      </div>
+      <div class="game-grid home-new-arrivals">
+        <% newest.slice(0, 6).forEach((game) => { %>
+          <%- include('../partials/game-card', { game }) %>
+        <% }) %>
+      </div>
+    </section>
+
+    <section class="home-list-panel">
       <div class="section-heading align-items-start">
         <div>
           <span class="eyebrow">Player-rated</span>
           <h2>Top Rated</h2>
         </div>
       </div>
-      <div class="game-grid dense">
-        <% topRated.slice(0, 4).forEach((game) => { %>
-          <%- include('../partials/game-card', { game }) %>
+      <div class="compact-list">
+        <% topRated.slice(0, 6).forEach((game, index) => { %>
+          <a href="/games/<%= game.slug %>" class="compact-game">
+            <span class="rank"><%= index + 1 %></span>
+            <img src="<%= game.cover_image_url || '/uploads/placeholder-cover.svg' %>" alt="">
+            <span class="compact-title"><%= game.title %><small><%= game.rating_average || '0.0' %> stars from <%= game.rating_count || 0 %></small></span>
+          </a>
         <% }) %>
       </div>
-    </div>
+    </section>
   </div>
 </section>
 
