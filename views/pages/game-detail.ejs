@@ -7,7 +7,7 @@
           <% (game.genre || []).forEach((genre) => { %><a class="genre-badge" href="/games?genre=<%= encodeURIComponent(genre) %>"><%= genre %></a><% }) %>
         </div>
         <h1><%= game.title %></h1>
-        <p><%= game.short_description || 'A public domain game from the vault.' %></p>
+        <p><%= game.short_description || 'A game from piracy.cloud.' %></p>
         <div class="detail-stats">
           <span><i class="bi bi-star-fill"></i> <%= game.rating_average %> from <%= game.rating_count %></span>
           <span><i class="bi bi-download"></i> <%= Number(game.download_count || 0).toLocaleString() %></span>

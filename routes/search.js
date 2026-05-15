@@ -15,7 +15,7 @@ router.get('/', async (req, res, next) => {
 
     res.render('pages/search', {
       title: q ? `Search: ${q}` : 'Search Games',
-      metaDescription: 'Search public domain games by title, description, developer, tag, genre, and platform.',
+      metaDescription: 'Search games by title, description, developer, tag, genre, and platform.',
       ...result,
       filters,
       tags,

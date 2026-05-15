@@ -22,7 +22,7 @@ router.get('/', async (req, res, next) => {
 
     return res.render('pages/games', {
       title: 'Browse Games',
-      metaDescription: 'Browse public domain game downloads by genre, platform, decade, rating, and popularity.',
+      metaDescription: 'Browse game downloads by genre, platform, decade, rating, and popularity.',
       ...result,
       filters,
       tags,
@@ -59,7 +59,7 @@ router.get('/:slug', async (req, res, next) => {
 
     return res.render('pages/game-detail', {
       title: `${game.title} Download`,
-      metaDescription: game.short_description || `Download ${game.title}, a public domain game.`,
+      metaDescription: game.short_description || `Download ${game.title} on piracy.cloud.`,
       game,
       relatedGames,
       comments: comments.data || [],

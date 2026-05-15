@@ -1,7 +1,7 @@
 {
-  "name": "public-domain-game-vault",
+  "name": "piracy-cloud",
   "version": "1.0.0",
-  "description": "Full-stack public domain game download platform built with Express, EJS, Bootstrap 5, and Supabase.",
+  "description": "Full-stack game download platform built with Express, EJS, Bootstrap 5, and Supabase.",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",

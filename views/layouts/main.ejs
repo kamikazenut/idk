@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <% const pageTitle = typeof title !== 'undefined' && title ? title : 'Public Domain Game Vault'; %>
-  <% const pageDescription = typeof metaDescription !== 'undefined' && metaDescription ? metaDescription : 'A public domain game archive with downloads, ratings, wishlists, comments, and curated discovery.'; %>
-  <title><%= pageTitle === 'Public Domain Game Vault' ? pageTitle : `${pageTitle} | Public Domain Game Vault` %></title>
+  <% const siteName = 'piracy.cloud'; %>
+  <% const pageTitle = typeof title !== 'undefined' && title ? title : siteName; %>
+  <% const pageDescription = typeof metaDescription !== 'undefined' && metaDescription ? metaDescription : 'A game archive with downloads, ratings, wishlists, comments, and curated discovery.'; %>
+  <title><%= pageTitle === siteName ? pageTitle : `${pageTitle} | ${siteName}` %></title>
   <meta name="description" content="<%= pageDescription %>">
   <meta property="og:title" content="<%= pageTitle %>">
   <meta property="og:description" content="<%= pageDescription %>">

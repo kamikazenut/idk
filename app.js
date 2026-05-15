@@ -141,7 +141,7 @@ app.use((err, req, res, next) => {
 
 if (require.main === module) {
   app.listen(port, host, () => {
-    console.log(`Public Domain Game Vault running on http://${host}:${port}`);
+    console.log(`piracy.cloud running on http://${host}:${port}`);
   });
 }
 

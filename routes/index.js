@@ -11,8 +11,8 @@ router.get('/', async (req, res, next) => {
     const filters = await gameService.getFilters();
     await logEvent({ eventType: 'page_view', userId: req.user?.id, metadata: { path: '/' } });
     res.render('pages/home', {
-      title: 'Public Domain Game Vault',
-      metaDescription: 'Discover, rate, wishlist, and download public domain games across every classic and modern genre.',
+      title: 'piracy.cloud',
+      metaDescription: 'Discover, rate, wishlist, and download games across every classic and modern genre.',
       ...data,
       filters
     });

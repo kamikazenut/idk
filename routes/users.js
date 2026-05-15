@@ -9,7 +9,7 @@ router.get('/profile', requireLogin, async (req, res, next) => {
     const data = await userService.getProfilePage(req.user.id);
     res.render('pages/profile', {
       title: 'Your Profile',
-      metaDescription: 'Manage your public domain game profile, wishlist, ratings, and comment history.',
+      metaDescription: 'Manage your piracy.cloud profile, wishlist, ratings, and comment history.',
       ...data,
       editable: true
     });

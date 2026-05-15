@@ -1,10 +1,10 @@
-# Public Domain Game Vault
+# piracy.cloud
 
-A full-stack public domain game download platform built with Node.js, Express, EJS, Bootstrap 5, and Supabase for PostgreSQL, Auth, and Storage.
+A full-stack game download platform built with Node.js, Express, EJS, Bootstrap 5, and Supabase for PostgreSQL, Auth, and Storage.
 
 ## Features
 
-- Public game discovery pages with featured games, filters, search, ratings, wishlists, comments, and download logging.
+- Game discovery pages with featured games, filters, search, ratings, wishlists, comments, and download logging.
 - Supabase Auth-backed account system with profiles, roles, suspension checks, and OAuth hooks.
 - Admin panel for games, download links, users, comments, analytics, and tags.
 - Supabase migrations with tables, indexes, RLS policies, helper functions, and storage bucket policies.

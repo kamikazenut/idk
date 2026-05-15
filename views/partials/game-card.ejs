@@ -2,7 +2,7 @@
   <a href="/games/<%= game.slug %>" class="game-cover-link">
     <img src="<%= game.cover_image_url || '/uploads/placeholder-cover.svg' %>" alt="<%= game.title %> cover" loading="lazy" class="game-cover">
     <div class="game-overlay">
-      <p><%= game.short_description || 'Explore this public domain release.' %></p>
+      <p><%= game.short_description || 'Explore this release.' %></p>
       <span class="btn btn-cyan btn-sm"><i class="bi bi-eye"></i> Details</span>
     </div>
   </a>

@@ -80,7 +80,7 @@
           <article class="game-card h-100">
             <a href="/games/${game.slug}" class="game-cover-link">
               <img src="${game.cover_image_url || '/uploads/placeholder-cover.svg'}" alt="${game.title} cover" loading="lazy" class="game-cover">
-              <div class="game-overlay"><p>${game.short_description || 'Explore this public domain release.'}</p><span class="btn btn-cyan btn-sm"><i class="bi bi-eye"></i> Details</span></div>
+              <div class="game-overlay"><p>${game.short_description || 'Explore this release.'}</p><span class="btn btn-cyan btn-sm"><i class="bi bi-eye"></i> Details</span></div>
             </a>
             <div class="game-card-body">
               <div class="d-flex justify-content-between align-items-start gap-2">

@@ -10,7 +10,7 @@ const router = express.Router();
 router.get('/login', redirectIfAuthenticated, (req, res) => {
   res.render('pages/login', {
     title: 'Log In',
-    metaDescription: 'Log in to rate, wishlist, comment, and download public domain games.',
+    metaDescription: 'Log in to rate, wishlist, comment, and download games.',
     next: req.query.next || '/'
   });
 });
@@ -18,7 +18,7 @@ router.get('/login', redirectIfAuthenticated, (req, res) => {
 router.get('/register', redirectIfAuthenticated, (req, res) => {
   res.render('pages/register', {
     title: 'Create Account',
-    metaDescription: 'Create a free account for the public domain game vault.'
+    metaDescription: 'Create a free piracy.cloud account.'
   });
 });
 
