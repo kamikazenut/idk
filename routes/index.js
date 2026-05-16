@@ -56,6 +56,7 @@ router.get('/sitemap.xml', async (req, res, next) => {
       { loc: '/', lastmod: new Date().toISOString() },
       { loc: '/games', lastmod: new Date().toISOString() },
       { loc: '/mods', lastmod: new Date().toISOString() },
+      { loc: '/media', lastmod: new Date().toISOString() },
       { loc: '/search', lastmod: new Date().toISOString() },
       ...((games.error ? [] : games.data) || []).map((game) => ({
         loc: `/games/${game.slug}`,

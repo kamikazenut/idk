@@ -1,0 +1,30 @@
+<section class="page-header media-header">
+  <div class="container">
+    <span class="eyebrow"><a href="/media/show/<%= media.tmdb_id %>"><%= media.title %></a></span>
+    <h1><%= season.name || `Season ${season.season_number}` %></h1>
+    <p><%= season.overview || 'Browse episodes in this season.' %></p>
+  </div>
+</section>
+
+<section class="container py-5">
+  <% if (episodes.length) { %>
+    <div class="episode-list">
+      <% episodes.forEach((episode) => { %>
+        <a class="episode-row" href="/media/show/<%= media.tmdb_id %>/season/<%= episode.season_number %>/episode/<%= episode.episode_number %>">
+          <img src="<%= episode.still_url || media.backdrop_url || '/uploads/placeholder-cover.svg' %>" alt="">
+          <span>
+            <strong>S<%= episode.season_number %>E<%= episode.episode_number %> - <%= episode.title %></strong>
+            <small><%= episode.overview || 'No overview available.' %></small>
+          </span>
+          <b><%= episode.active_download_links.length %> links</b>
+        </a>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <div class="empty-state">
+      <h2>No episodes synced yet.</h2>
+      <p>Sync this season from the admin panel.</p>
+    </div>
+  <% } %>
+  <p class="tmdb-credit mt-4">Metadata and images provided by TMDB.</p>
+</section>

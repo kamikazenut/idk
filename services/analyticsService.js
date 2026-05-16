@@ -55,6 +55,27 @@ async function logModDownload({ modId, linkId, userId, ip, userAgent }) {
   return eventLog;
 }
 
+async function logMediaDownload({ mediaItemId = null, episodeId = null, linkId, userId, ip, userAgent }) {
+  const payload = {
+    media_item_id: mediaItemId || null,
+    episode_id: episodeId || null,
+    link_id: linkId,
+    user_id: userId || null,
+    ip_hash: hashIp(ip),
+    user_agent: cleanText(userAgent, 500)
+  };
+
+  const entityId = mediaItemId || episodeId;
+  const [downloadLog, eventLog] = await Promise.all([
+    supabaseAdmin.from('media_download_log').insert(payload),
+    logEvent({ eventType: 'download', entityId, userId, metadata: { type: 'media', link_id: linkId, episode_id: episodeId } })
+  ]);
+
+  if (downloadLog.error) throw downloadLog.error;
+  await supabaseAdmin.rpc('increment_media_download_counts', { target_link_id: linkId });
+  return eventLog;
+}
+
 async function logSearch({ query, userId, filters = {} }) {
   await logEvent({
     eventType: 'search',
@@ -191,6 +212,7 @@ module.exports = {
   logEvent,
   logDownload,
   logModDownload,
+  logMediaDownload,
   logSearch,
   getDashboardStats,
   getTrend,

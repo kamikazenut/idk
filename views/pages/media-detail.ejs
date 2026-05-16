@@ -1,0 +1,102 @@
+<section class="game-hero media-hero" style="--hero-image:url('<%= media.backdrop_url || media.poster_url || '/uploads/placeholder-cover.svg' %>')">
+  <div class="container">
+    <div class="game-hero-grid">
+      <img class="detail-cover" src="<%= media.poster_url || '/uploads/placeholder-cover.svg' %>" alt="<%= media.title %> poster">
+      <div class="detail-copy">
+        <div class="badge-row">
+          <a class="genre-badge" href="/media?type=<%= media.media_type %>"><%= media.media_type === 'movie' ? 'Movie' : 'Show' %></a>
+          <% (media.genres || []).slice(0, 4).forEach((genre) => { %>
+            <a class="genre-badge" href="/media?genre=<%= encodeURIComponent(genre) %>"><%= genre %></a>
+          <% }) %>
+        </div>
+        <span class="eyebrow">TMDB #<%= media.tmdb_id %></span>
+        <h1><%= media.title %></h1>
+        <p><%= media.overview || 'No overview available.' %></p>
+        <div class="detail-stats">
+          <span><i class="bi bi-star-fill"></i> <%= media.rating_average %> community</span>
+          <span><i class="bi bi-film"></i> <%= media.tmdb_vote_average || '0' %> TMDB</span>
+          <span><i class="bi bi-download"></i> <%= Number(media.download_count || 0).toLocaleString() %></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container detail-layout py-5">
+  <div>
+    <div class="content-panel">
+      <h2>Overview</h2>
+      <div class="prose"><p><%= media.overview || 'No overview has been imported yet.' %></p></div>
+    </div>
+
+    <% if (media.media_type === 'movie') { %>
+      <div class="content-panel" id="downloads">
+        <div class="section-heading">
+          <h2>Movie Links</h2>
+          <span><%= media.active_download_links.length %> links</span>
+        </div>
+        <% if (media.active_download_links.length) { %>
+          <div class="download-list">
+            <% media.active_download_links.forEach((link) => { %>
+              <div class="download-row media-download-row">
+                <div>
+                  <strong><%= link.label %></strong>
+                  <div class="download-meta">
+                    <% if (link.quality) { %><span><%= link.quality %></span><% } %>
+                    <% if (link.file_size_mb) { %><span><%= link.file_size_mb %> MB</span><% } %>
+                    <span class="source-badge"><%= link.source_type %></span>
+                  </div>
+                </div>
+                <form action="/media-downloads/<%= link.id %>" method="post">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="btn btn-cyan"><i class="bi bi-box-arrow-up-right"></i> Open</button>
+                </form>
+              </div>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <p class="muted">No active links are available yet.</p>
+        <% } %>
+      </div>
+    <% } else { %>
+      <div class="content-panel" id="seasons">
+        <div class="section-heading">
+          <h2>Seasons</h2>
+          <span><%= seasons.length %> seasons</span>
+        </div>
+        <% if (seasons.length) { %>
+          <div class="season-grid">
+            <% seasons.forEach((season) => { %>
+              <a class="season-card" href="/media/show/<%= media.tmdb_id %>/season/<%= season.season_number %>">
+                <img src="<%= season.poster_url || media.poster_url || '/uploads/placeholder-cover.svg' %>" alt="">
+                <span><strong><%= season.name || `Season ${season.season_number}` %></strong><small><%= season.episode_count || 0 %> episodes</small></span>
+              </a>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <p class="muted">No seasons synced yet.</p>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
+
+  <aside class="detail-sidebar">
+    <div class="content-panel">
+      <h2>Info</h2>
+      <dl class="info-list">
+        <dt>Type</dt><dd><%= media.media_type === 'movie' ? 'Movie' : 'Show' %></dd>
+        <dt>TMDB ID</dt><dd><%= media.tmdb_id %></dd>
+        <dt>Released</dt><dd><%= media.release_date || 'Unknown' %></dd>
+        <dt>Runtime</dt><dd><%= media.runtime_minutes ? `${media.runtime_minutes} min` : 'Unknown' %></dd>
+        <dt>Status</dt><dd><%= media.status || 'Unknown' %></dd>
+      </dl>
+    </div>
+    <div class="content-panel">
+      <h2>Share</h2>
+      <div class="share-row">
+        <button class="btn btn-outline-info btn-sm" data-copy-url="<%= `${baseUrl}/media/${media.media_type === 'movie' ? 'movie' : 'show'}/${media.tmdb_id}` %>"><i class="bi bi-link-45deg"></i> Copy</button>
+      </div>
+    </div>
+    <p class="tmdb-credit">Metadata and images provided by TMDB.</p>
+  </aside>
+</section>

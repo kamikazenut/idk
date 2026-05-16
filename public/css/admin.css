@@ -288,6 +288,96 @@ body.admin-body {
   grid-template-columns: 1fr 1.4fr 8rem 6rem 7rem 5rem 5rem auto auto;
 }
 
+.media-link-row {
+  grid-template-columns: 1fr 1.4fr 8rem 6rem 6rem 5rem 5rem auto auto;
+}
+
+.media-result-list,
+.season-admin-list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.media-result-row,
+.season-admin-row {
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr) auto;
+  gap: 0.8rem;
+  align-items: center;
+  padding: 0.8rem;
+  border: 1px solid var(--admin-line);
+  border-radius: 8px;
+}
+
+.media-result-row img {
+  width: 4rem;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.media-result-row p {
+  display: -webkit-box;
+  max-width: 48rem;
+  margin: 0.2rem 0;
+  overflow: hidden;
+  color: var(--admin-muted);
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.media-result-row small,
+.season-admin-row span {
+  color: var(--admin-muted);
+}
+
+.season-admin-row {
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+}
+
+.episode-admin-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.episode-admin-card {
+  padding: 1rem;
+  border: 1px solid var(--admin-line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.episode-admin-head {
+  display: grid;
+  grid-template-columns: 11rem minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.episode-admin-head img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--admin-line);
+}
+
+.episode-admin-head small {
+  display: block;
+  color: var(--admin-muted);
+}
+
+.episode-admin-head p {
+  color: var(--admin-muted);
+  margin: 0.35rem 0 0.75rem;
+}
+
+.empty-admin-state {
+  padding: 1rem;
+  border: 1px dashed var(--admin-line);
+  border-radius: 8px;
+}
+
 .comment-admin-item {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -332,6 +422,12 @@ body.admin-body {
   }
 
   .link-row {
+    grid-template-columns: 1fr;
+  }
+
+  .media-result-row,
+  .season-admin-row,
+  .episode-admin-head {
     grid-template-columns: 1fr;
   }
 }

@@ -1,0 +1,25 @@
+<article class="game-card media-card h-100">
+  <a href="/media/<%= item.media_type === 'movie' ? 'movie' : 'show' %>/<%= item.tmdb_id %>" class="game-cover-link">
+    <img src="<%= item.poster_url || '/uploads/placeholder-cover.svg' %>" alt="<%= item.title %> poster" loading="lazy" class="game-cover">
+    <div class="game-overlay">
+      <p><%= item.overview || 'Open the media page for details and links.' %></p>
+      <span class="btn btn-cyan btn-sm"><i class="bi bi-play-circle"></i> Details</span>
+    </div>
+  </a>
+  <div class="game-card-body">
+    <div class="d-flex justify-content-between align-items-start gap-2">
+      <h3><a href="/media/<%= item.media_type === 'movie' ? 'movie' : 'show' %>/<%= item.tmdb_id %>"><%= item.title %></a></h3>
+      <span class="rating-pill"><i class="bi bi-star-fill"></i> <%= item.rating_average || '0.0' %></span>
+    </div>
+    <div class="badge-row">
+      <a class="genre-badge" href="/media?type=<%= item.media_type %>"><%= item.media_type === 'movie' ? 'Movie' : 'Show' %></a>
+      <% (item.genres || []).slice(0, 2).forEach((genre) => { %>
+        <a class="genre-badge" href="/media?genre=<%= encodeURIComponent(genre) %>"><%= genre %></a>
+      <% }) %>
+    </div>
+    <div class="game-meta">
+      <span><i class="bi bi-download"></i> <%= Number(item.download_count || 0).toLocaleString() %></span>
+      <span><i class="bi bi-calendar3"></i> <%= item.release_date ? String(item.release_date).slice(0, 4) : 'Unknown' %></span>
+    </div>
+  </div>
+</article>

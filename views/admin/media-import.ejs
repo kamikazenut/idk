@@ -1,0 +1,45 @@
+<div class="admin-panel mb-4">
+  <div class="panel-head">
+    <h2>TMDB Import</h2>
+    <span><%= tmdbConfigured ? 'Connected' : 'TMDB token missing' %></span>
+  </div>
+  <% if (!tmdbConfigured) { %>
+    <div class="alert alert-warning">Set <code>TMDB_ACCESS_TOKEN</code> or <code>TMDB_API_KEY</code> before searching TMDB.</div>
+  <% } %>
+  <form action="/admin/media/search" method="get" class="admin-search">
+    <input class="form-control" name="q" value="<%= query.q || '' %>" placeholder="Search TMDB title">
+    <select class="form-select" name="type">
+      <option value="multi" <%= query.type === 'multi' || !query.type ? 'selected' : '' %>>Movies & shows</option>
+      <option value="movie" <%= query.type === 'movie' ? 'selected' : '' %>>Movies</option>
+      <option value="show" <%= query.type === 'show' ? 'selected' : '' %>>Shows</option>
+    </select>
+    <button class="btn btn-primary">Search</button>
+  </form>
+</div>
+
+<div class="admin-panel">
+  <div class="panel-head">
+    <h2>Results</h2>
+    <span>Import by TMDB ID</span>
+  </div>
+  <div class="media-result-list">
+    <% results.forEach((item) => { %>
+      <article class="media-result-row">
+        <img src="<%= item.posterUrl || '/uploads/placeholder-cover.svg' %>" alt="">
+        <div>
+          <strong><%= item.title %></strong>
+          <p><%= item.overview || 'No overview.' %></p>
+          <small><%= item.mediaType === 'movie' ? 'Movie' : 'Show' %> · TMDB #<%= item.tmdbId %> · <%= item.releaseDate || 'Unknown date' %></small>
+        </div>
+        <form action="/admin/media/import" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="tmdb_id" value="<%= item.tmdbId %>">
+          <input type="hidden" name="media_type" value="<%= item.mediaType %>">
+          <input type="hidden" name="is_published" value="on">
+          <button class="btn btn-primary btn-sm">Import</button>
+        </form>
+      </article>
+    <% }) %>
+    <% if (!results.length) { %><p class="text-secondary mb-0">Search for a movie or show to import.</p><% } %>
+  </div>
+</div>

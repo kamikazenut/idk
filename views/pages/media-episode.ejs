@@ -1,0 +1,58 @@
+<section class="game-hero media-hero" style="--hero-image:url('<%= episode.still_url || media.backdrop_url || media.poster_url || '/uploads/placeholder-cover.svg' %>')">
+  <div class="container">
+    <div class="detail-copy">
+      <div class="badge-row">
+        <a class="genre-badge" href="/media/show/<%= media.tmdb_id %>"><%= media.title %></a>
+        <a class="genre-badge" href="/media/show/<%= media.tmdb_id %>/season/<%= episode.season_number %>">Season <%= episode.season_number %></a>
+      </div>
+      <span class="eyebrow"><%= episode.episode_key %></span>
+      <h1>S<%= episode.season_number %>E<%= episode.episode_number %> - <%= episode.title %></h1>
+      <p><%= episode.overview || 'No overview available.' %></p>
+    </div>
+  </div>
+</section>
+
+<section class="container detail-layout py-5">
+  <div>
+    <div class="content-panel" id="downloads">
+      <div class="section-heading">
+        <h2>Episode Links</h2>
+        <span><%= episode.active_download_links.length %> links</span>
+      </div>
+      <% if (episode.active_download_links.length) { %>
+        <div class="download-list">
+          <% episode.active_download_links.forEach((link) => { %>
+            <div class="download-row media-download-row">
+              <div>
+                <strong><%= link.label %></strong>
+                <div class="download-meta">
+                  <% if (link.quality) { %><span><%= link.quality %></span><% } %>
+                  <% if (link.file_size_mb) { %><span><%= link.file_size_mb %> MB</span><% } %>
+                  <span class="source-badge"><%= link.source_type %></span>
+                </div>
+              </div>
+              <form action="/media-downloads/<%= link.id %>" method="post">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button class="btn btn-cyan"><i class="bi bi-box-arrow-up-right"></i> Open</button>
+              </form>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p class="muted">No active episode links are available yet.</p>
+      <% } %>
+    </div>
+  </div>
+
+  <aside class="detail-sidebar">
+    <div class="content-panel">
+      <h2>Info</h2>
+      <dl class="info-list">
+        <dt>Episode key</dt><dd><%= episode.episode_key %></dd>
+        <dt>Air date</dt><dd><%= episode.air_date || 'Unknown' %></dd>
+        <dt>Runtime</dt><dd><%= episode.runtime_minutes ? `${episode.runtime_minutes} min` : 'Unknown' %></dd>
+      </dl>
+    </div>
+    <p class="tmdb-credit">Metadata and images provided by TMDB.</p>
+  </aside>
+</section>

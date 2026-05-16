@@ -1,0 +1,48 @@
+<div class="admin-actions">
+  <form action="/admin/media" method="get" class="admin-search">
+    <input class="form-control" name="q" value="<%= query.q || '' %>" placeholder="Search local media">
+    <select class="form-select" name="type">
+      <option value="">Movies & shows</option>
+      <option value="movie" <%= query.type === 'movie' ? 'selected' : '' %>>Movies</option>
+      <option value="show" <%= query.type === 'show' ? 'selected' : '' %>>Shows</option>
+    </select>
+    <button class="btn btn-primary">Filter</button>
+  </form>
+  <a class="btn btn-primary" href="/admin/media/new"><i class="bi bi-cloud-download"></i> Import TMDB</a>
+</div>
+
+<div class="admin-panel">
+  <table class="table table-hover align-middle admin-table" data-datatable>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Type</th>
+        <th>TMDB</th>
+        <th>Downloads</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% items.forEach((item) => { %>
+        <tr>
+          <td>
+            <div class="table-game">
+              <img src="<%= item.poster_url || '/uploads/placeholder-cover.svg' %>" alt="">
+              <div><strong><%= item.title %></strong><small><%= item.release_date || 'Unknown date' %></small></div>
+            </div>
+          </td>
+          <td><%= item.media_type === 'movie' ? 'Movie' : 'Show' %></td>
+          <td><%= item.tmdb_id %></td>
+          <td><%= Number(item.download_count || 0).toLocaleString() %></td>
+          <td><span class="status-pill <%= item.is_published ? 'published' : 'draft' %>"><%= item.is_published ? 'Published' : 'Draft' %></span></td>
+          <td class="text-end">
+            <a class="btn btn-sm btn-outline-primary" href="/admin/media/<%= item.id %>/edit">Edit</a>
+            <a class="btn btn-sm btn-outline-secondary" href="/media/<%= item.media_type === 'movie' ? 'movie' : 'show' %>/<%= item.tmdb_id %>">View</a>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% if (!items.length) { %><p class="text-secondary mb-0">No media imported yet.</p><% } %>
+</div>

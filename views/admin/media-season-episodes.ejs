@@ -1,0 +1,79 @@
+<div class="admin-actions">
+  <div>
+    <a class="btn btn-outline-secondary" href="/admin/media/<%= media.id %>/edit#seasons"><i class="bi bi-arrow-left"></i> Back to <%= media.title %></a>
+    <a class="btn btn-outline-primary" href="/media/show/<%= media.tmdb_id %>/season/<%= season?.season_number || '' %>">View public season</a>
+  </div>
+  <form action="/admin/media/<%= media.id %>/seasons/<%= season?.season_number || 0 %>/sync" method="post">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <button class="btn btn-primary"><i class="bi bi-arrow-repeat"></i> Re-sync season</button>
+  </form>
+</div>
+
+<section class="admin-panel">
+  <div class="panel-head">
+    <h2><%= season?.name || `Season ${season?.season_number || ''}` %></h2>
+    <span><%= episodes.length %> synced episodes</span>
+  </div>
+
+  <div class="episode-admin-list">
+    <% episodes.forEach((episode) => { %>
+      <article class="episode-admin-card" id="episode-<%= episode.id %>">
+        <div class="episode-admin-head">
+          <img src="<%= episode.still_url || media.backdrop_url || '/uploads/placeholder-cover.svg' %>" alt="">
+          <div>
+            <strong>S<%= episode.season_number %>E<%= episode.episode_number %> - <%= episode.title %></strong>
+            <small><%= episode.episode_key %></small>
+            <p><%= episode.overview || 'No overview available.' %></p>
+            <a class="btn btn-sm btn-outline-secondary" href="/media/show/<%= media.tmdb_id %>/season/<%= episode.season_number %>/episode/<%= episode.episode_number %>">View public episode</a>
+          </div>
+        </div>
+
+        <div class="link-manager mt-3">
+          <% (episode.media_download_links || []).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)).forEach((link) => { %>
+            <form action="/admin/media/episodes/<%= episode.id %>/links/<%= link.id %>?_method=PUT" method="post" class="link-row media-link-row">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input class="form-control" name="label" value="<%= link.label %>" placeholder="Label">
+              <input class="form-control" name="url" value="<%= link.url %>" placeholder="URL">
+              <select class="form-select" name="source_type">
+                <% ['direct','torrent','external','stream'].forEach((type) => { %>
+                  <option value="<%= type %>" <%= link.source_type === type ? 'selected' : '' %>><%= type %></option>
+                <% }) %>
+              </select>
+              <input class="form-control" name="quality" value="<%= link.quality || '' %>" placeholder="1080p">
+              <input class="form-control" name="file_size_mb" type="number" step="0.01" value="<%= link.file_size_mb || '' %>" placeholder="MB">
+              <input class="form-control" name="sort_order" type="number" value="<%= link.sort_order || 0 %>">
+              <label class="form-check"><input class="form-check-input" type="checkbox" name="is_active" <%= link.is_active ? 'checked' : '' %>> Active</label>
+              <button class="btn btn-outline-primary btn-sm">Save</button>
+              <button form="delete-episode-link-<%= link.id %>" class="btn btn-outline-danger btn-sm" data-confirm="Delete this episode link?">Delete</button>
+            </form>
+            <form id="delete-episode-link-<%= link.id %>" action="/admin/media/episodes/<%= episode.id %>/links/<%= link.id %>?_method=DELETE" method="post">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            </form>
+          <% }) %>
+        </div>
+
+        <form action="/admin/media/episodes/<%= episode.id %>/links" method="post" class="link-row media-link-row new-link mt-3">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input class="form-control" name="label" placeholder="Episode link" required>
+          <input class="form-control" name="url" placeholder="https://..." required>
+          <select class="form-select" name="source_type">
+            <option value="external">external</option>
+            <option value="stream">stream</option>
+            <option value="direct">direct</option>
+            <option value="torrent">torrent</option>
+          </select>
+          <input class="form-control" name="quality" placeholder="1080p">
+          <input class="form-control" name="file_size_mb" type="number" step="0.01" placeholder="MB">
+          <input class="form-control" name="sort_order" type="number" value="0">
+          <label class="form-check"><input class="form-check-input" type="checkbox" name="is_active" checked> Active</label>
+          <button class="btn btn-primary btn-sm">Add Link</button>
+        </form>
+      </article>
+    <% }) %>
+    <% if (!episodes.length) { %>
+      <div class="empty-admin-state">
+        <p class="text-secondary">No episodes are synced yet. Use the re-sync button above to pull them from TMDB.</p>
+      </div>
+    <% } %>
+  </div>
+</section>

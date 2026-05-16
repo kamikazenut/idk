@@ -22,9 +22,12 @@ const searchRoutes = require('./routes/search');
 const downloadRoutes = require('./routes/downloads');
 const modRoutes = require('./routes/mods');
 const modDownloadRoutes = require('./routes/modDownloads');
+const mediaRoutes = require('./routes/media');
+const mediaDownloadRoutes = require('./routes/mediaDownloads');
 const adminDashboardRoutes = require('./routes/admin/dashboard');
 const adminGameRoutes = require('./routes/admin/games');
 const adminModRoutes = require('./routes/admin/mods');
+const adminMediaRoutes = require('./routes/admin/media');
 const adminUserRoutes = require('./routes/admin/users');
 const adminCommentRoutes = require('./routes/admin/comments');
 const adminAnalyticsRoutes = require('./routes/admin/analytics');
@@ -66,7 +69,7 @@ app.use(helmet({
       scriptSrc: ["'self'", "'unsafe-inline'", 'cdn.jsdelivr.net', 'code.jquery.com', 'cdn.datatables.net'],
       styleSrc: ["'self'", "'unsafe-inline'", 'cdn.jsdelivr.net', 'cdn.datatables.net', 'fonts.googleapis.com'],
       fontSrc: ["'self'", 'fonts.gstatic.com', 'cdn.jsdelivr.net'],
-      imgSrc: ["'self'", 'data:', 'https:'],
+      imgSrc: ["'self'", 'data:', 'https:', 'image.tmdb.org'],
       connectSrc: ["'self'", process.env.SUPABASE_URL || 'https://*.supabase.co'],
       frameSrc: ["'self'", process.env.SUPABASE_URL || 'https://*.supabase.co']
     }
@@ -115,9 +118,12 @@ app.use('/search', searchRoutes);
 app.use('/downloads', downloadRoutes);
 app.use('/mods', modRoutes);
 app.use('/mod-downloads', modDownloadRoutes);
+app.use('/media', mediaRoutes);
+app.use('/media-downloads', mediaDownloadRoutes);
 app.use('/admin', adminDashboardRoutes);
 app.use('/admin/games', adminGameRoutes);
 app.use('/admin/mods', adminModRoutes);
+app.use('/admin/media', adminMediaRoutes);
 app.use('/admin/users', adminUserRoutes);
 app.use('/admin/comments', adminCommentRoutes);
 app.use('/admin/analytics', adminAnalyticsRoutes);
