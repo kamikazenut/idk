@@ -9,6 +9,7 @@ const compression = require('compression');
 const morgan = require('morgan');
 const flash = require('connect-flash');
 const methodOverride = require('method-override');
+const packageJson = require('./package.json');
 
 const { attachUser } = require('./middleware/auth');
 const { csrfProtection, exposeCsrf } = require('./middleware/csrf');
@@ -38,6 +39,8 @@ const port = process.env.PORT || 3000;
 const host = process.env.HOST || '0.0.0.0';
 const trustProxy = process.env.TRUST_PROXY === 'false' ? false : Number(process.env.TRUST_PROXY || 1);
 const sessionMaxAgeDays = Number(process.env.SESSION_MAX_AGE_DAYS || 30);
+const assetVersion = process.env.ASSET_VERSION || process.env.SOURCE_COMMIT || process.env.COOLIFY_GIT_COMMIT_SHA || packageJson.version;
+const staticMaxAge = process.env.STATIC_MAX_AGE || (process.env.NODE_ENV === 'production' ? '1h' : 0);
 
 app.set('trust proxy', trustProxy);
 
@@ -82,7 +85,13 @@ app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(express.json({ limit: '2mb' }));
 app.use(methodOverride((req) => req.body?._method || req.query?._method));
 app.use(express.static(path.join(__dirname, 'public'), {
-  maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0
+  etag: true,
+  maxAge: staticMaxAge,
+  setHeaders: (res, filePath) => {
+    if (/\.(css|js)$/i.test(filePath)) {
+      res.setHeader('Cache-Control', `public, max-age=${process.env.STATIC_ASSET_MAX_AGE_SECONDS || 3600}, must-revalidate`);
+    }
+  }
 }));
 
 app.use(session({
@@ -106,6 +115,8 @@ app.use(exposeCsrf);
 app.use((req, res, next) => {
   res.locals.currentPath = req.path;
   res.locals.baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+  res.locals.assetVersion = assetVersion;
+  res.setHeader('Cache-Control', 'no-store');
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
   next();
