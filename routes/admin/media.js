@@ -7,6 +7,10 @@ const router = express.Router();
 
 router.use(requireModerator);
 
+function episodeManagerUrl(episode) {
+  return `/admin/media/${episode.media_item_id}/seasons/${episode.season_number}/episodes#episode-${episode.id}`;
+}
+
 router.get('/', async (req, res, next) => {
   try {
     const result = await mediaService.listAdminMedia(req.query);
@@ -171,8 +175,9 @@ router.get('/:id/seasons/:seasonNumber/episodes', async (req, res, next) => {
 router.post('/episodes/:episodeId/links', async (req, res, next) => {
   try {
     await mediaService.addDownloadLink(req.body, { episodeId: req.params.episodeId });
+    const episode = await mediaService.getAdminEpisode(req.params.episodeId);
     req.flash('success', 'Episode link added.');
-    res.redirect(req.get('referer') || '/admin/media');
+    res.redirect(episodeManagerUrl(episode));
   } catch (error) {
     next(error);
   }
@@ -181,8 +186,9 @@ router.post('/episodes/:episodeId/links', async (req, res, next) => {
 router.put('/episodes/:episodeId/links/:linkId', async (req, res, next) => {
   try {
     await mediaService.updateDownloadLink(req.params.linkId, req.body);
+    const episode = await mediaService.getAdminEpisode(req.params.episodeId);
     req.flash('success', 'Episode link updated.');
-    res.redirect(req.get('referer') || '/admin/media');
+    res.redirect(episodeManagerUrl(episode));
   } catch (error) {
     next(error);
   }
@@ -191,8 +197,9 @@ router.put('/episodes/:episodeId/links/:linkId', async (req, res, next) => {
 router.delete('/episodes/:episodeId/links/:linkId', async (req, res, next) => {
   try {
     await mediaService.deleteDownloadLink(req.params.linkId);
+    const episode = await mediaService.getAdminEpisode(req.params.episodeId);
     req.flash('success', 'Episode link deleted.');
-    res.redirect(req.get('referer') || '/admin/media');
+    res.redirect(episodeManagerUrl(episode));
   } catch (error) {
     next(error);
   }

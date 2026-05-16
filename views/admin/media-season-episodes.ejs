@@ -30,7 +30,7 @@
 
         <div class="link-manager mt-3">
           <% (episode.media_download_links || []).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0)).forEach((link) => { %>
-            <form action="/admin/media/episodes/<%= episode.id %>/links/<%= link.id %>?_method=PUT" method="post" class="link-row media-link-row">
+            <form action="/admin/media/episodes/<%= episode.id %>/links/<%= link.id %>?_method=PUT#episode-<%= episode.id %>" method="post" class="link-row media-link-row">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <input class="form-control" name="label" value="<%= link.label %>" placeholder="Label">
               <input class="form-control" name="url" value="<%= link.url %>" placeholder="URL">
@@ -46,13 +46,13 @@
               <button class="btn btn-outline-primary btn-sm">Save</button>
               <button form="delete-episode-link-<%= link.id %>" class="btn btn-outline-danger btn-sm" data-confirm="Delete this episode link?">Delete</button>
             </form>
-            <form id="delete-episode-link-<%= link.id %>" action="/admin/media/episodes/<%= episode.id %>/links/<%= link.id %>?_method=DELETE" method="post">
+            <form id="delete-episode-link-<%= link.id %>" action="/admin/media/episodes/<%= episode.id %>/links/<%= link.id %>?_method=DELETE#episode-<%= episode.id %>" method="post">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             </form>
           <% }) %>
         </div>
 
-        <form action="/admin/media/episodes/<%= episode.id %>/links" method="post" class="link-row media-link-row new-link mt-3">
+        <form action="/admin/media/episodes/<%= episode.id %>/links#episode-<%= episode.id %>" method="post" class="link-row media-link-row new-link mt-3">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <input class="form-control" name="label" placeholder="Episode link" required>
           <input class="form-control" name="url" placeholder="https://..." required>

@@ -324,6 +324,16 @@ async function getEpisodeByNumbers(mediaItemId, seasonNumber, episodeNumber, { c
   return episode;
 }
 
+async function getAdminEpisode(id) {
+  const { data, error } = await supabaseAdmin
+    .from('media_episodes')
+    .select('*, media_items(id, title, tmdb_id, media_type)')
+    .eq('id', id)
+    .single();
+  if (error) throw error;
+  return data;
+}
+
 async function addDownloadLink(body, target) {
   const { data, error } = await supabaseAdmin.from('media_download_links').insert(linkPayload(body, target)).select().single();
   if (error) throw error;
@@ -377,6 +387,7 @@ module.exports = {
   getSeason,
   listEpisodes,
   getEpisodeByNumbers,
+  getAdminEpisode,
   addDownloadLink,
   updateDownloadLink,
   deleteDownloadLink,
