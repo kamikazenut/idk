@@ -365,6 +365,62 @@ async function getDownloadLink(linkId) {
   return data;
 }
 
+function serializeStreamLinks(links = []) {
+  return (links || [])
+    .filter((link) => link.is_active !== false && link.source_type === 'stream')
+    .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
+    .map((link) => ({
+      id: link.id,
+      label: link.label,
+      url: link.url,
+      quality: link.quality || null,
+      language: link.language || null,
+      version: link.version || null
+    }));
+}
+
+async function getMovieStreams(tmdbId) {
+  const { data, error } = await supabaseAdmin
+    .from('media_items')
+    .select('id, media_type, tmdb_id, title, is_published, media_download_links(id, label, url, source_type, quality, language, version, is_active, sort_order)')
+    .eq('media_type', 'movie')
+    .eq('tmdb_id', Number(tmdbId))
+    .eq('is_published', true)
+    .maybeSingle();
+  if (error) return handleMissingMediaTable(error, null);
+  if (!data) return null;
+  return {
+    type: 'movie',
+    tmdb_id: data.tmdb_id,
+    title: data.title,
+    streams: serializeStreamLinks(data.media_download_links)
+  };
+}
+
+async function getEpisodeStreams(tmdbId, seasonNumber, episodeNumber) {
+  const { data, error } = await supabaseAdmin
+    .from('media_episodes')
+    .select('id, episode_key, season_number, episode_number, title, is_published, media_items!inner(id, tmdb_id, title, is_published), media_download_links(id, label, url, source_type, quality, language, version, is_active, sort_order)')
+    .eq('season_number', Number(seasonNumber))
+    .eq('episode_number', Number(episodeNumber))
+    .eq('is_published', true)
+    .eq('media_items.tmdb_id', Number(tmdbId))
+    .eq('media_items.is_published', true)
+    .maybeSingle();
+  if (error) return handleMissingMediaTable(error, null);
+  if (!data || !data.media_items) return null;
+  return {
+    type: 'episode',
+    tmdb_id: data.media_items.tmdb_id,
+    show_title: data.media_items.title,
+    title: data.title,
+    season_number: data.season_number,
+    episode_number: data.episode_number,
+    episode_key: data.episode_key,
+    streams: serializeStreamLinks(data.media_download_links)
+  };
+}
+
 async function getGenres() {
   const { data, error } = await supabaseAdmin.from('media_items').select('genres').eq('is_published', true);
   if (error) return handleMissingMediaTable(error, []);
@@ -392,5 +448,7 @@ module.exports = {
   updateDownloadLink,
   deleteDownloadLink,
   getDownloadLink,
+  getMovieStreams,
+  getEpisodeStreams,
   getGenres
 };
