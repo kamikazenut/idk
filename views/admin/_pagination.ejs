@@ -1,0 +1,48 @@
+<%
+  const currentPage = Number(page || 1);
+  const pageCount = Number(totalPages || 1);
+  const rowCount = Number(total || 0);
+  const currentQuery = typeof query !== 'undefined' && query ? query : {};
+  const selectedPerPage = Number(perPage || currentQuery.perPage || 20);
+  const pageSizes = [20, 50, 100, 200];
+  const pageParamName = typeof pageParam !== 'undefined' && pageParam ? pageParam : 'page';
+  const perPageParamName = typeof perPageParam !== 'undefined' && perPageParam ? perPageParam : 'perPage';
+  const inputId = typeof id !== 'undefined' && id ? id : 'admin-per-page';
+  const baseQuery = { ...currentQuery };
+  delete baseQuery[pageParamName];
+  delete baseQuery[perPageParamName];
+  const makePageUrl = (targetPage) => `${basePath}?${new URLSearchParams({ ...baseQuery, [perPageParamName]: selectedPerPage, [pageParamName]: targetPage }).toString()}`;
+%>
+
+<div class="pagination-row admin-pagination">
+  <form action="<%= basePath %>" method="get" class="admin-page-size">
+    <% Object.entries(baseQuery).forEach(([key, value]) => { %>
+      <% if (value !== undefined && value !== null && value !== '') { %>
+        <input type="hidden" name="<%= key %>" value="<%= value %>">
+      <% } %>
+    <% }) %>
+    <input type="hidden" name="<%= pageParamName %>" value="1">
+    <label for="<%= inputId %>">Show</label>
+    <select id="<%= inputId %>" class="form-select form-select-sm" name="<%= perPageParamName %>" data-auto-submit>
+      <% pageSizes.forEach((size) => { %>
+        <option value="<%= size %>" <%= selectedPerPage === size ? 'selected' : '' %>><%= size %></option>
+      <% }) %>
+    </select>
+    <span>per page</span>
+    <noscript><button class="btn btn-sm btn-outline-secondary">Apply</button></noscript>
+  </form>
+
+  <div class="admin-page-summary">
+    <span><%= rowCount.toLocaleString() %> total</span>
+    <span>Page <%= currentPage %> of <%= pageCount %></span>
+  </div>
+
+  <div class="admin-page-buttons">
+    <% if (currentPage > 1) { %>
+      <a class="btn btn-outline-secondary" href="<%= makePageUrl(currentPage - 1) %>">Previous</a>
+    <% } %>
+    <% if (currentPage < pageCount) { %>
+      <a class="btn btn-outline-secondary" href="<%= makePageUrl(currentPage + 1) %>">Next</a>
+    <% } %>
+  </div>
+</div>

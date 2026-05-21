@@ -63,9 +63,19 @@ async function loadModFormData() {
 
 router.get('/', async (req, res, next) => {
   try {
+    const hubOptions = {
+      ...req.query,
+      page: req.query.hubPage || req.query.page,
+      perPage: req.query.hubPerPage || req.query.perPage
+    };
+    const modOptions = {
+      ...req.query,
+      page: req.query.modPage || req.query.page,
+      perPage: req.query.modPerPage || req.query.perPage
+    };
     const [hubResult, modResult, comments] = await Promise.all([
-      modService.listAdminModGames(req.query),
-      modService.listAdminMods(req.query),
+      modService.listAdminModGames(hubOptions),
+      modService.listAdminMods(modOptions),
       modService.listModCommentsForAdmin()
     ]);
     res.render('admin/mods', {
@@ -73,9 +83,13 @@ router.get('/', async (req, res, next) => {
       title: 'Manage Mods',
       hubs: hubResult.modGames,
       hubPage: hubResult.page,
+      hubPerPage: hubResult.perPage,
+      hubTotal: hubResult.total,
       hubTotalPages: hubResult.totalPages,
       mods: modResult.mods,
       modPage: modResult.page,
+      modPerPage: modResult.perPage,
+      modTotal: modResult.total,
       modTotalPages: modResult.totalPages,
       modComments: comments,
       pendingModComments: comments.filter((comment) => !comment.is_approved).length,

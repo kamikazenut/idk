@@ -290,7 +290,7 @@ async function softDeleteGame(id) {
 
 async function listAdminGames(options = {}) {
   const page = Math.max(Number(options.page) || 1, 1);
-  const perPage = 20;
+  const perPage = Math.min(Math.max(Number(options.perPage) || 20, 1), 200);
   const from = (page - 1) * perPage;
   const to = from + perPage - 1;
   let query = supabaseAdmin.from('games').select('*', { count: 'exact' }).order('created_at', { ascending: false });

@@ -233,7 +233,7 @@ async function listLinkedGameOptions() {
 
 async function listAdminModGames(options = {}) {
   const page = Math.max(Number(options.page) || 1, 1);
-  const perPage = Math.min(Number(options.perPage) || 20, 200);
+  const perPage = Math.min(Math.max(Number(options.perPage) || 20, 1), 200);
   const from = (page - 1) * perPage;
   const to = from + perPage - 1;
   let query = supabaseAdmin.from('mod_games').select(`${MOD_GAME_SELECT}, mods(id, deleted_at)`, { count: 'exact' }).order('created_at', { ascending: false });
@@ -251,7 +251,7 @@ async function listAdminModGames(options = {}) {
 
 async function listAdminMods(options = {}) {
   const page = Math.max(Number(options.page) || 1, 1);
-  const perPage = Math.min(Number(options.perPage) || 20, 200);
+  const perPage = Math.min(Math.max(Number(options.perPage) || 20, 1), 200);
   const from = (page - 1) * perPage;
   const to = from + perPage - 1;
   let query = supabaseAdmin.from('mods').select(MOD_SELECT, { count: 'exact' }).order('created_at', { ascending: false });

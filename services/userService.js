@@ -78,8 +78,8 @@ async function addComment(userId, gameId, body, parentId) {
   return data;
 }
 
-async function listUsers({ q = '', page = 1 } = {}) {
-  const perPage = 25;
+async function listUsers({ q = '', page = 1, perPage: perPageOption } = {}) {
+  const perPage = Math.min(Math.max(Number(perPageOption) || 20, 1), 200);
   const currentPage = Math.max(Number(page) || 1, 1);
   const from = (currentPage - 1) * perPage;
   const to = from + perPage - 1;
@@ -87,7 +87,7 @@ async function listUsers({ q = '', page = 1 } = {}) {
   if (q) query = query.or(`username.ilike.%${q}%,bio.ilike.%${q}%`);
   const { data, count, error } = await query.range(from, to);
   if (error) throw error;
-  return { users: data || [], total: count || 0, page: currentPage, totalPages: Math.max(Math.ceil((count || 0) / perPage), 1) };
+  return { users: data || [], total: count || 0, page: currentPage, perPage, totalPages: Math.max(Math.ceil((count || 0) / perPage), 1) };
 }
 
 async function getUserStats(userId) {

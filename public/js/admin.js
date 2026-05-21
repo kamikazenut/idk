@@ -7,10 +7,19 @@
     });
   });
 
+  document.querySelectorAll('[data-auto-submit]').forEach((item) => {
+    item.addEventListener('change', () => {
+      item.form?.requestSubmit();
+    });
+  });
+
   document.querySelectorAll('[data-datatable]').forEach((table) => {
     if (window.DataTable) {
       new window.DataTable(table, {
-        pageLength: 25,
+        paging: false,
+        info: false,
+        searching: false,
+        lengthChange: false,
         order: [],
         responsive: true
       });

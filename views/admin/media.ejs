@@ -6,6 +6,7 @@
       <option value="movie" <%= query.type === 'movie' ? 'selected' : '' %>>Movies</option>
       <option value="show" <%= query.type === 'show' ? 'selected' : '' %>>Shows</option>
     </select>
+    <input type="hidden" name="perPage" value="<%= perPage %>">
     <button class="btn btn-primary">Filter</button>
   </form>
   <a class="btn btn-primary" href="/admin/media/new"><i class="bi bi-cloud-download"></i> Import TMDB</a>
@@ -46,3 +47,5 @@
   </table>
   <% if (!items.length) { %><p class="text-secondary mb-0">No media imported yet.</p><% } %>
 </div>
+
+<%- include('_pagination', { basePath: '/admin/media', id: 'media-per-page', query, page, totalPages, total, perPage }) %>
